@@ -9,12 +9,12 @@ import numpy as np
 # ═══════════════════════════════════════════════════════════════════════════
 
 CROSS_SECTIONS = {
-    "local": "/home/targi/nuclear_data/cross_sections.xml",
+    "local": "/path/to/endfb-viii.0-hdf5/cross_sections.xml",
     "hpc": "~/endfb-viii.0-hdf5/cross_sections.xml",
 }
 CHAIN_FILE = {
-    "local": "/home/targi/nuclear_data/chain-endf-b8.0.xml",
-    "hpc": None, 
+    "local": "/path/to/chain-endf-b8.0.xml",
+    "hpc": None,
 }
 
 # ═══════════════════════════════════════════════════════════════════════════

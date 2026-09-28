@@ -250,9 +250,9 @@ Phase 2 writes the statepoint in `ce_run/`. That folder has no plot of its own.
 
 ## Dataset
 
-[`dataset_creation.py`](../scripts/dataset_creation.md) fills the table the surrogate will learn from. The materials stay the stack I just kept: cast iron, then HDPE. Four numbers move: the gap, the iron thickness, the HDPE thickness, and the plate size \(L\). Each row is one run of the same forward model.
+The training set for this example is already in the repository, at `examples/demo_hcpb_vv.csv`. The check and the calibration below read that file, so you can follow them without running the OpenMC sweep.
 
-The result is a CSV.
+[`dataset_creation.py`](../scripts/dataset_creation.md) is what filled that table. The materials stay the stack I just kept: cast iron, then HDPE. Four numbers move: the gap, the iron thickness, the HDPE thickness, and the plate size \(L\). Each row is one run of the same forward model. The settings below are the ones that produced the given CSV, if you want to rebuild it.
 
 | Setting | Value in this example | Why |
 |---|---|---|
@@ -263,7 +263,7 @@ The result is a CSV.
 | `N_SAMPLES` | 350 | How many new points this run asks for |
 | `SOBOL_SEED` | 42 | Same seed, same points, same order |
 | `CE_BATCHES`, `CE_PARTICLES` | 100, 200 000 | Particles and batches of Phase 2, choosen to give a low uncertainty along the whole spectrum while still being computationally affordable |
-| `OUTPUT_CSV` | `examples/demo_hcpb_vv.csv` | The file the calibration reads |
+| `OUTPUT_CSV` | `examples/demo_hcpb_vv.csv` | Already included. The calibration reads this file |
 
 The points are a Sobol sequence. The count, the seed, and what `--refine` does are on the [dataset page](../scripts/dataset_creation.md).
 

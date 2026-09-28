@@ -28,11 +28,11 @@ It is not the only configuration file. Materials live in [`config_materials.py`]
 
 ```python
 CROSS_SECTIONS = {
-    "local": "your path/cross_sections.xml",
+    "local": "/path/to/endfb-viii.0-hdf5/cross_sections.xml",
     "hpc": "~/endfb-viii.0-hdf5/cross_sections.xml",
 }
 CHAIN_FILE = {
-    "local": "your path/chain-endf-b8.0.xml",
+    "local": "/path/to/chain-endf-b8.0.xml",
     "hpc": None,
 }
 ```

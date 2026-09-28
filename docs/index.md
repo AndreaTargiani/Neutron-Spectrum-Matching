@@ -61,6 +61,12 @@ pip install -r requirements.txt
 
 ---
 
+## Future work
+
+The same method can also be applied to gamma calibration. That still needs work, and it may be developed and included later.
+
+---
+
 ## Acknowledgements
 
 This work is part of a master’s thesis on experiment design for neutron detector calibration. The internship was partially funded by the **FuseNet Association**, with partial support from the **EUROfusion Consortium**.
