@@ -13,6 +13,44 @@
   border-radius: 3px;
 }
 
+/* GitHub-style repository row on the home page */
+.repo-lockup {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 0.25rem 0 1.4rem;
+  padding: 0.7rem 0.95rem;
+  background: #0d1117;
+  border-radius: 8px;
+}
+
+.repo-lockup img {
+  height: 84px;
+  width: auto;
+  display: block;
+}
+
+.repo-lockup a {
+  color: #e6edf3;
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+.repo-lockup a:hover {
+  text-decoration: underline;
+}
+
+.repo-lockup span {
+  color: #9198a1;
+  font-size: 0.75rem;
+  line-height: 1;
+  border: 1px solid #3d444d;
+  border-radius: 2em;
+  padding: 0.28rem 0.6rem;
+}
+
 /* white background behind header logo */
 .md-header__button.md-logo {
   background-color: white;

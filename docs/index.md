@@ -1,9 +1,9 @@
 # Neutron Spectrum Matching via Bayesian Inference
 
-<div style="display: flex; justify-content: center;">
-  <div style="background-color: white; padding: 20px;">
-    <img src="assets/logo.png" width="400" alt="logo">
-  </div>
+<div class="repo-lockup">
+  <img src="assets/logo.png" alt="Neutron Spectrum Matching logo">
+  <a href="https://github.com/AndreaTargiani/Neutron-Spectrum-Matching">Neutron-Spectrum-Matching</a>
+  <span>Public</span>
 </div>
 
 This framework designs a neutron detector calibration bench. You give it a source and the spectrum a detector should see. It returns the shielding in between: which materials, in which order, how thick, and how large the plates should be. Each size comes with a range, so you can see what the shop must hold tightly and what can still move.
