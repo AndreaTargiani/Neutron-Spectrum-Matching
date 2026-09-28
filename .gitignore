@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# OpenMC run artefacts
+statepoint.*.h5
+summary.h5
+tallies.out
+geometry.xml
+materials.xml
+settings.xml
+tallies.xml
+model.xml
+openmc_tally_statistics.csv
+particle_restart.*.h5
+track_*.h5
+
+# Large data files (tensor database — generate locally)
+*.pkl
+*.h5
+*.npz
+*.npy
+*.csv
+!examples/*.csv
+# Figures written beside the scripts. The documentation images stay.
+*.png
+!docs/assets/*.png
+ww_generation/
+trained_gps/
+opt_database/
+opt_database_jet/
+# Jupyter
+.ipynb_checkpoints/
+
+# MkDocs build
+site/
+
+# OS
+.DS_Store
+Thumbs.db

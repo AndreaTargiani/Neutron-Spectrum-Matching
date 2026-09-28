@@ -1,0 +1,104 @@
+site_name: Neutron Spectrum Bayesian Matching 
+site_description: >-
+  A Monte Carlo driven, surrogate-accelerated framework for neutron spectrum matching via Bayesian Calibration.
+site_url: https://AndreaTargiani.github.io/Neutron-Spectrum-Matching/
+repo_url: https://github.com/AndreaTargiani/Neutron-Spectrum-Matching
+repo_name: Neutron-Spectrum-Matching
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  logo: assets/logo.png
+  favicon: assets/logo.png
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: cyan
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: cyan
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+        
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.path
+    - navigation.top
+    - search.highlight
+    - search.suggest
+    - content.code.copy
+    - content.code.annotate
+  icon:
+    repo: fontawesome/brands/github
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.details
+  - tables
+  - toc:
+      permalink: true
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+
+extra_css:
+  - stylesheets/extra.css
+
+nav:
+  - Home: index.md
+  - Pipeline:
+      - Configure:
+          - config.py: scripts/config.md
+          - config_materials.py: scripts/config_materials.md
+          - config_detector.py: scripts/config_detector.md
+          - Optional:
+              - rebin_target_spectrum.py: scripts/rebin_target_spectrum.md
+              - bin_weights.py: scripts/bin_weights.md
+      - Transfer tensors:
+          - transfer_matrix.py: scripts/transfer_matrix.md
+      - Optimize:
+          - optimizer.py: scripts/optimizer.md
+          - Optional:
+              - read_opt.py: scripts/read_opt.md
+      - Validate:
+          - base_plates.py: scripts/base_plates.md
+      - Dataset:
+          - dataset_creation.py: scripts/dataset_creation.md
+          - Optional:
+              - analize_dataset.py: scripts/analize_dataset.md
+      - Calibrate:
+          - calibration.py: scripts/calibration.md
+      - Utilities:
+          - Optional scripts: scripts/utilities.md
+          - rebin_target_spectrum.py: scripts/rebin_target_spectrum.md
+          - bin_weights.py: scripts/bin_weights.md
+          - read_opt.py: scripts/read_opt.md
+  - Example: example/demo_vv.md
+  - Theory:
+      - S_N Transfer Operator: theory/sn_transfer_operator.md
+      - Material Arrangement Optimizer: theory/optimization.md
+      - Bayesian Calibration: theory/bayesian_calibration.md
+
+
+plugins:
+  - search

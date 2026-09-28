@@ -1,0 +1,17 @@
+# Packages imported by the scripts in src/.
+# OpenMC is not here. Install the develop branch from source:
+# https://docs.openmc.org/en/develop/usersguide/install.html
+
+numpy>=2
+scipy>=1.13
+pandas>=2.2
+matplotlib>=3.9
+scikit-learn>=1.5
+
+openturns>=1.27
+# categorical_distance_func exists through 4.x and is removed in 5.0.
+optuna>=3.6,<5
+pymc>=6
+pytensor>=3
+arviz>=1.1
+corner>=2.2
