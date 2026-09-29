@@ -1,0 +1,2603 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A Monte Carlo driven, surrogate-accelerated framework for neutron spectrum matching via Bayesian Calibration.">
+      
+      
+      
+        <link rel="canonical" href="https://AndreaTargiani.github.io/Neutron-Spectrum-Matching/theory/bayesian_calibration/">
+      
+      
+        <link rel="prev" href="../optimization/">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/logo.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Bayesian Calibration - Neutron Spectrum Bayesian Matching</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#bayesian-calibration" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Neutron Spectrum Bayesian Matching" class="md-header__button md-logo" aria-label="Neutron Spectrum Bayesian Matching" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Neutron Spectrum Bayesian Matching
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Bayesian Calibration
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/AndreaTargiani/Neutron-Spectrum-Matching" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Neutron-Spectrum-Matching
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../scripts/config/" class="md-tabs__link">
+          
+  
+  
+  Pipeline
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../example/demo_vv/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Example
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../sn_transfer_operator/" class="md-tabs__link">
+          
+  
+  
+  Theory
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Neutron Spectrum Bayesian Matching" class="md-nav__button md-logo" aria-label="Neutron Spectrum Bayesian Matching" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    Neutron Spectrum Bayesian Matching
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/AndreaTargiani/Neutron-Spectrum-Matching" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Neutron-Spectrum-Matching
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipeline
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Pipeline
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configure
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Configure
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/config_materials/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config_materials.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/config_detector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config_detector.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_1_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_1_4" id="__nav_2_1_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Optional
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_1_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Optional
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/rebin_target_spectrum/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rebin_target_spectrum.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/bin_weights/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    bin_weights.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transfer tensors
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Transfer tensors
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/transfer_matrix/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    transfer_matrix.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Optimize
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Optimize
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/optimizer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    optimizer.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3_2" id="__nav_2_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Optional
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Optional
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/read_opt/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    read_opt.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validate
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Validate
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/base_plates/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    base_plates.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dataset
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Dataset
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/dataset_creation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    dataset_creation.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_2" id="__nav_2_5_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Optional
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Optional
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/analize_dataset/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    analize_dataset.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Calibrate
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Calibrate
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/calibration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    calibration.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7" id="__nav_2_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Utilities
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Utilities
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/utilities/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Optional scripts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/rebin_target_spectrum/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rebin_target_spectrum.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/bin_weights/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    bin_weights.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/read_opt/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    read_opt.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../example/demo_vv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Example
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Theory
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Theory
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sn_transfer_operator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    S_N Transfer Operator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Material Arrangement Optimizer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bayesian Calibration
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bayesian Calibration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#input-parametrization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Input parametrization
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#active-bins" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Active bins
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#target-transform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Target transform
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Target transform">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-coordinate-the-process-is-fit-to" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The coordinate the process is fit to
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uncertainty-propagation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Uncertainty propagation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gpr-surrogate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GPR surrogate
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GPR surrogate">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kernel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kernel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trend
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hyperparameter-optimisation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hyperparameter optimisation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#leave-one-out-cross-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Leave-one-out cross validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sobol-sensitivity-indices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sobol sensitivity indices
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bayesian-inference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bayesian inference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Bayesian inference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prior" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prior
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#likelihood" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Likelihood
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sampling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sampling
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#posterior-diagnostics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Posterior diagnostics
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#best-sample-selection-and-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Best-sample selection and validation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Best-sample selection and validation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#map-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MAP configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#posterior-predictive-band" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Posterior predictive band
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        References
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#input-parametrization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Input parametrization
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#active-bins" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Active bins
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#target-transform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Target transform
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Target transform">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-coordinate-the-process-is-fit-to" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The coordinate the process is fit to
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uncertainty-propagation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Uncertainty propagation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gpr-surrogate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GPR surrogate
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GPR surrogate">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kernel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kernel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trend
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hyperparameter-optimisation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hyperparameter optimisation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#leave-one-out-cross-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Leave-one-out cross validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sobol-sensitivity-indices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sobol sensitivity indices
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bayesian-inference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bayesian inference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Bayesian inference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prior" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prior
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#likelihood" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Likelihood
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sampling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sampling
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#posterior-diagnostics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Posterior diagnostics
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#best-sample-selection-and-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Best-sample selection and validation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Best-sample selection and validation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#map-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MAP configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#posterior-predictive-band" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Posterior predictive band
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        References
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../sn_transfer_operator/" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Theory
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="bayesian-calibration">Bayesian Calibration<a class="headerlink" href="#bayesian-calibration" title="Permanent link">&para;</a></h1>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>The Bayesian calibration step solves the inverse problem: given a target neutron spectrum <span class="arithmatex">\(\mathbf{y}^\text{obs}\)</span>, find the posterior over the shield parameters</p>
+<div class="arithmatex">\[
+\pmb{\theta} = (x_1,\; t_1,\; \ldots,\; t_{N-1},\; L)
+\]</div>
+<p>that are consistent with that spectrum. <span class="arithmatex">\(x_1\)</span> is the source-to-shield gap, <span class="arithmatex">\(t_k\)</span> is the thickness of plate <span class="arithmatex">\(k\)</span>, and <span class="arithmatex">\(L\)</span> is the square plate size. The material order is already fixed; one Sobol CSV is one stack.</p>
+<p>A full OpenMC simulation inside an MCMC loop is too expensive. The calibration therefore has two stages:</p>
+<ol>
+<li><strong>Surrogate.</strong> A Gaussian process is trained on the Sobol dataset (see <a href="../../scripts/dataset_creation/"><code>dataset_creation.py</code></a>), one process per active energy bin, so that <span class="arithmatex">\(\pmb{\theta} \mapsto \mathbf{y}\)</span> can be evaluated at negligible cost.</li>
+<li><strong>Posterior sampling.</strong> That surrogate replaces OpenMC inside a Bayesian model. The default sampler is sequential Monte Carlo, which on this posterior concentrates on one mode. NUTS is the alternative when separate chains should look for more than one geometry; it uses an analytic gradient of the posterior mean.</li>
+</ol>
+<p>Fluxes in the CSV, and the target, are integral-normalised, so the posterior is over spectral shape. After sampling, the maximum-a-posteriori (MAP) geometry is checked with one OpenMC run.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Sobol CSV  ──►  GPR surrogate (one per active bin)
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>                    │
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>                    │  PyTensor op + analytic Matérn gradient
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>                    ▼
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>               PyMC model  (weighted χ² in the transformed flux)
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>                    │  SMC (default) or NUTS
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>                    ▼
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>               Posterior samples
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>                    │  min weighted χ² → MAP draw
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>                    ▼
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>               FW-CADIS OpenMC validation run  (thicknesses and L)
+</span></code></pre></div>
+<p>Knobs, cache, and output files are on the <a href="../../scripts/calibration/">script page</a>.</p>
+<hr />
+<h2 id="input-parametrization">Input parametrization<a class="headerlink" href="#input-parametrization" title="Permanent link">&para;</a></h2>
+<p>The Sobol dataset stores cumulative plate boundaries <span class="arithmatex">\((x_1, x_2, \ldots, x_N)\)</span>. They are ordered by construction, <span class="arithmatex">\(x_1 &lt; x_2 &lt; \cdots &lt; x_N\)</span>, so a kernel distance on those columns mixes a gap with a sum of thicknesses.</p>
+<p>The independent parameters are the ones the Sobol sampler actually drew:</p>
+<div class="arithmatex">\[
+\pmb{\theta} = (x_1,\; t_1 = x_2 - x_1,\; \ldots,\; t_{N-1} = x_N - x_{N-1},\; L)
+\]</div>
+<p>A uniform prior on <span class="arithmatex">\(\pmb{\theta}\)</span> then matches the training distribution. The cumulative boundaries are rebuilt when the MAP geometry is handed to OpenMC, and they are stored on the trace as deterministic nodes.</p>
+<p>Inputs are MinMax-scaled to <span class="arithmatex">\([0, 1]^d\)</span> with the training-split bounds before the kernel sees them to improve the model efficiency.</p>
+<hr />
+<h2 id="active-bins">Active bins<a class="headerlink" href="#active-bins" title="Permanent link">&para;</a></h2>
+<p>A target bin whose flux is exactly zero is dropped: no Gaussian process, no likelihood term, no Sobol index. Comparison plots leave a gap there. The same rule is used in <a href="../../scripts/analize_dataset/"><code>analize_dataset.py</code></a> and in the optimizer.</p>
+<p>Weights from <code>WEIGHT_MODE</code> are computed on the full grid, zeroed on those bins, and then restricted to the bins that remain.</p>
+<hr />
+<h2 id="target-transform">Target transform<a class="headerlink" href="#target-transform" title="Permanent link">&para;</a></h2>
+<p>The surrogate is a Gaussian process, and the calibration likelihood is a normal <span class="arithmatex">\(\chi^2\)</span>. Both describe a bin well when the column they see is close to Gaussian: one peak, roughly symmetric, tails that fall off the way a bell curve does.</p>
+<p>A normalised flux bin is often far from that shape. Over a Sobol sweep the same energy is near zero for many shields and bright for a few. On that raw column the constant mean sits on the spike, the bright samples look like outliers, and a residual of one standard deviation does not mean the same error near zero and out in the tail. That residual is the coordinate NUTS sees, so the column has to be made as Gaussian as a simple map allows before any length scale is fit.</p>
+<p>A power transform is that map. It is monotone, with one exponent <span class="arithmatex">\(\lambda\)</span> chosen by maximum likelihood so the transformed column is as Gaussian as that family can make it. scikit-learn documents the two families used here, Box–Cox and Yeo–Johnson, under <a href="https://scikit-learn.org/stable/modules/preprocessing.html#mapping-to-a-gaussian-distribution">Mapping to a Gaussian distribution</a>. The class is <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PowerTransformer.html"><code>PowerTransformer</code></a>: estimate <span class="arithmatex">\(\lambda\)</span>, then standardise to zero mean and unit variance. <code>calibration.py</code> estimates <span class="arithmatex">\(\lambda\)</span> and standardises in the same step.</p>
+<p><img alt="Two bins of normalised flux, and the same samples after a power transform" src="../../assets/transform_gaussian_example.png" style="display:block;margin:0 auto;width:40rem;max-width:100%" /></p>
+<p><em>Left, grey: normalised flux in two energy bins, as the CSV stores it. Right, red: the same samples after a per-bin power transform. <span class="arithmatex">\(\lambda\)</span> on a red panel is the exponent fitted for that bin. <code>|sk|</code> is the absolute skewness of the histogram; lower is closer to symmetric. <code>QQ</code> is the correlation of the sample with normal quantiles; closer to 1 is closer to Gaussian. The top bin is a spike on zero. The transform spreads the positive values into a rough bell and <code>QQ</code> rises, while every exact zero is still sent to one point, so a bar remains at the left edge. The bottom bin was already close to symmetric, so a milder <span class="arithmatex">\(\lambda\)</span> is enough.</em></p>
+<p>A monotone map sends every exact zero to one value. When that bar is most of the bin, <code>|sk|</code> and <code>QQ</code> stay poor for every choice of <span class="arithmatex">\(f\)</span>.</p>
+<h3 id="the-coordinate-the-process-is-fit-to">The coordinate the process is fit to<a class="headerlink" href="#the-coordinate-the-process-is-fit-to" title="Permanent link">&para;</a></h3>
+<p>One map per bin, with <span class="arithmatex">\(f_b\)</span>, <span class="arithmatex">\(\mu_b\)</span>, and <span class="arithmatex">\(s_b\)</span> taken from that bin's training column only:</p>
+<div class="arithmatex">\[
+Z_b = \frac{f_b(Y_b) - \mu_b}{s_b}
+\]</div>
+<p><span class="arithmatex">\(\mu_b\)</span> and <span class="arithmatex">\(s_b\)</span> are the mean and standard deviation of <span class="arithmatex">\(f_b(Y_b)\)</span> on the training split. Dividing by <span class="arithmatex">\(s_b\)</span> is the second half of the job. Flux bins span orders of magnitude, and a shared noise floor only makes sense once <span class="arithmatex">\(Z_b = 1\)</span> means one standard deviation of bin <span class="arithmatex">\(b\)</span>, in every bin. If <span class="arithmatex">\(s_b\)</span> is below <span class="arithmatex">\(10^{-12}\)</span> (a bin with no spread), it is set to 1 so the division stays finite and <span class="arithmatex">\(Z_b \approx 0\)</span>. The inverse <span class="arithmatex">\(f_b^{-1}\)</span> is applied exactly when a prediction is plotted in flux units, and when the posterior predictive band is built. The inverse is nonlinear, so a symmetric band in <span class="arithmatex">\(Z\)</span> comes out asymmetric in flux, which is the shape a spike-plus-tail spectrum actually has.</p>
+<p>Three maps are implemented. Which one to use is an empirical question; <a href="../../scripts/analize_dataset/"><code>analize_dataset.py</code></a> ranks these and several others by how close <span class="arithmatex">\(Z\)</span> is to a normal. The script accepts the three names below.</p>
+<table>
+<thead>
+<tr>
+<th><code>Y_TRANSFORM</code></th>
+<th><span class="arithmatex">\(f(Y)\)</span></th>
+<th>When to use it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>boxcox</code></td>
+<td>Box–Cox power, <span class="arithmatex">\(\lambda\)</span> fit on the positive training values</td>
+<td>The column is strictly positive, and you want <span class="arithmatex">\(\lambda\)</span> chosen for Gaussianity. Non-positive values are clipped to a small floor first, so an occasional Monte Carlo zero still has a finite transform. <span class="arithmatex">\(\lambda = 0\)</span> is a logarithm; <span class="arithmatex">\(\lambda = 0.5\)</span> is a square root. A bin with a nearly linear fit (<span class="arithmatex">\(\lambda\)</span> above <code>LOG_OVERRIDE_LAMBDA</code>) whose target sits in the low tail of the training values is refitted with <span class="arithmatex">\(\lambda = 0\)</span>. Used on neutron-physics GPR outputs by <a href="#references">Lartaud et al. (2022)</a>.</td>
+</tr>
+<tr>
+<td><code>yeojohnson</code></td>
+<td>Yeo–Johnson power, <span class="arithmatex">\(\lambda\)</span> fit on the whole training column</td>
+<td>Same fit, and the formula is defined at zero, so Monte Carlo zeros are kept. <span class="arithmatex">\(\lambda = 1\)</span> is the identity on <span class="arithmatex">\(y \ge 0\)</span>: an already bell-shaped bin can be left as it is.</td>
+</tr>
+<tr>
+<td><code>log_eps</code></td>
+<td><span class="arithmatex">\(\log(Y + \varepsilon)\)</span></td>
+<td>A logarithm with no free <span class="arithmatex">\(\lambda\)</span>. <span class="arithmatex">\(\varepsilon\)</span> is set from the positive training values. The same compression in every bin, which is the right tool when the ranking says a log is enough.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="uncertainty-propagation">Uncertainty propagation<a class="headerlink" href="#uncertainty-propagation" title="Permanent link">&para;</a></h3>
+<p>Monte Carlo noise is heteroscedastic: the absolute error grows with the flux, so a bright sample and a near-zero sample do not share one <span class="arithmatex">\(\sigma\)</span>. The per-sample uncertainty <span class="arithmatex">\(\sigma_Y\)</span> is pushed into <span class="arithmatex">\(Z\)</span> by the delta method (<a href="#references">Oehlert, 1992</a>):</p>
+<div class="arithmatex">\[
+\sigma_Z = \sigma_Y \, \frac{|f'(Y)|}{s}
+\]</div>
+<p>For the three maps the derivative is <span class="arithmatex">\(y^{\lambda - 1}\)</span> (Box–Cox, and <span class="arithmatex">\(1/y\)</span> when <span class="arithmatex">\(\lambda = 0\)</span>), <span class="arithmatex">\((y+1)^{\lambda-1}\)</span> (Yeo–Johnson on <span class="arithmatex">\(y \ge 0\)</span>), and <span class="arithmatex">\(1/(y+\varepsilon)\)</span> (<code>log_eps</code>). This <span class="arithmatex">\(\sigma_Z\)</span> is the heteroscedastic observation noise of the Gaussian process, so the surrogate treats Monte Carlo fluctuations as noise.</p>
+<hr />
+<h2 id="gpr-surrogate">GPR surrogate<a class="headerlink" href="#gpr-surrogate" title="Permanent link">&para;</a></h2>
+<p>One process is fitted per active bin:</p>
+<div class="arithmatex">\[
+\hat Z_b(\pmb{\theta}) \approx Z_b(\pmb{\theta})
+\]</div>
+<p>Rows whose relative Monte Carlo uncertainty exceeds the configured cut are omitted from that bin, both when the process is fit and when the hold-out score is computed.</p>
+<h3 id="kernel">Kernel<a class="headerlink" href="#kernel" title="Permanent link">&para;</a></h3>
+<p>The covariance is an anisotropic Matérn kernel with smoothness <span class="arithmatex">\(\nu \in \{0.5, 1.5, 2.5\}\)</span> and one length scale <span class="arithmatex">\(\ell_j\)</span> per input, including <span class="arithmatex">\(L\)</span>. For these half-integer <span class="arithmatex">\(\nu\)</span> the kernel and <span class="arithmatex">\(\partial k / \partial \theta_j\)</span> have a closed form, and that derivative is the NUTS gradient.</p>
+<h3 id="trend">Trend<a class="headerlink" href="#trend" title="Permanent link">&para;</a></h3>
+<p>The mean is a constant. The NUTS surrogate reconstructs the posterior mean as <span class="arithmatex">\(\beta + \sum_i \gamma_i\, k(\pmb{\theta}, \mathbf{x}_i)\)</span>. The <span class="arithmatex">\(\gamma_i\)</span> are one coefficient per training point, solved once at fit time from <span class="arithmatex">\(C\gamma = \mathbf{Z} - H\beta\)</span>.</p>
+<h3 id="hyperparameter-optimisation">Hyperparameter optimisation<a class="headerlink" href="#hyperparameter-optimisation" title="Permanent link">&para;</a></h3>
+<p>Length scales and amplitude are estimated by maximising the Gaussian-process log-likelihood. With trend basis <span class="arithmatex">\(H\)</span> and</p>
+<div class="arithmatex">\[
+C = K(\pmb{\ell}, \sigma_f) + \Sigma_\text{noise},
+\qquad
+\Sigma_\text{noise} = \mathrm{diag}(\sigma_{Z,1}^2, \ldots, \sigma_{Z,n}^2),
+\]</div>
+<div class="arithmatex">\[
+\log \mathcal{L}(\beta, \pmb{\ell}, \sigma_f)
+  = -\frac12 (\mathbf{Z} - H\beta)^\top C^{-1} (\mathbf{Z} - H\beta)
+    - \frac12 \log\det C
+    - \frac{n}{2}\log 2\pi.
+\]</div>
+<p>The zero-mean, constant-variance case (<span class="arithmatex">\(H\beta = 0\)</span>, <span class="arithmatex">\(\Sigma_\text{noise} = \sigma_n^2 I\)</span>) is <a href="#references">Rasmussen and Williams (2006)</a>, eq. 2.30. The expression above is the one <a href="https://openturns.github.io/openturns/latest/theory/meta_modeling/gaussian_process_regression.html">OpenTURNS</a> maximises: the quadratic term is the residual of the trend, and <code>setNoise</code> puts the heteroscedastic variances on the diagonal of <span class="arithmatex">\(C\)</span>. The fitter then substitutes the generalised-least-squares <span class="arithmatex">\(\beta\)</span>, and, because each bin is a scalar output, the optimal amplitude. With those filled in, the search is only over the length scales.</p>
+<p>The likelihood surface has many local maxima. A multi-start run keeps the start with the highest marginal likelihood. The first start is the configured initial length scale; further starts are a Latin-hypercube design, log-uniform between the length-scale bounds. If the Cholesky factor still fails, the noise is inflated and the fit is retried. A bin that never factors is replaced by its training mean in <span class="arithmatex">\(Z\)</span>, with a zero gradient, so sampling can proceed.</p>
+<h3 id="leave-one-out-cross-validation">Leave-one-out cross validation<a class="headerlink" href="#leave-one-out-cross-validation" title="Permanent link">&para;</a></h3>
+<p>Both scores use the same training rows in <span class="arithmatex">\(Z\)</span>, the ones that passed the uncertainty cut. They differ in whether a row is allowed to explain itself.</p>
+<p>The training <span class="arithmatex">\(R^2\)</span> predicts each row with a process fit on that row. A flexible kernel can sit close to those fluxes, so the score stays near 1 even when the process is copying the training rows, Monte Carlo noise included.</p>
+<p>The leave-one-out <span class="arithmatex">\(R^2\)</span> predicts each row as if it had been removed. It is computed from the inverse of the noisy kernel, without refitting (<a href="#references">Rasmussen and Williams, 2006</a>, eq. 5.12). Close values mean the training score is not just memorisation. A high training <span class="arithmatex">\(R^2\)</span> and a much lower leave-one-out value mean the length scales are short and the process is fitting local wiggles.</p>
+<p>Neither is the validation <span class="arithmatex">\(R^2\)</span>. That one uses hold-out rows that never entered the fit and that pass the same uncertainty cut. The leave-one-out score still uses length scales chosen with every training row present, so it is a little kinder than the held-out score.</p>
+<hr />
+<h2 id="sobol-sensitivity-indices">Sobol sensitivity indices<a class="headerlink" href="#sobol-sensitivity-indices" title="Permanent link">&para;</a></h2>
+<p>First-order and total-order Sobol indices are computed for each active bin by a Saltelli design on the trained metamodel (<a href="#references">Saltelli et al., 2008</a>).</p>
+<p><span class="arithmatex">\(S_j^{(b)}\)</span> is the fraction of the variance of bin <span class="arithmatex">\(b\)</span>, in the metamodel's output, attributed to input <span class="arithmatex">\(j\)</span> alone. <span class="arithmatex">\(S_{T,j}^{(b)}\)</span> adds every interaction that involves <span class="arithmatex">\(j\)</span>. The gap <span class="arithmatex">\(S_T - S_1\)</span> is the interaction share. A gap near 0 means <span class="arithmatex">\(j\)</span> acts on its own: its effect on that bin barely depends on the other inputs. A large gap means most of that influence appears only together with the other factors.</p>
+<hr />
+<h2 id="bayesian-inference">Bayesian inference<a class="headerlink" href="#bayesian-inference" title="Permanent link">&para;</a></h2>
+<h3 id="prior">Prior<a class="headerlink" href="#prior" title="Permanent link">&para;</a></h3>
+<p>Each coordinate of <span class="arithmatex">\(\pmb{\theta}\)</span> is uniform on the range of that coordinate in the training split:</p>
+<div class="arithmatex">\[
+\theta_j = \theta_{j,\mathrm{lo}} + u_j \, (\theta_{j,\mathrm{hi}} - \theta_{j,\mathrm{lo}}),
+\qquad u_j \sim \mathcal{U}(0, 1)
+\]</div>
+<p>The unit-interval latents are what the sampler steps in. The physical parameters, and the cumulative boundaries built by summing thicknesses, are deterministic transforms of those latents. The prior is the training box: the feasible region the surrogate was shown. A shorter interval, written into <code>prior_bounds</code> before sampling, drops every geometry outside it. That is how a run with several modes is brought back to one. The script page shows the assignment.</p>
+<h3 id="likelihood">Likelihood<a class="headerlink" href="#likelihood" title="Permanent link">&para;</a></h3>
+<p>The target is transformed with the same per-bin maps:</p>
+<div class="arithmatex">\[
+z_b^\text{obs} = \frac{f_b(y_b^\text{obs}) - \mu_b}{s_b}
+\]</div>
+<p><code>LIKELIHOOD_SIGMA_PCT</code> is a relative tolerance on the normalised flux, in percent. It is converted to a width in <span class="arithmatex">\(Z\)</span> by the delta method, then floored:</p>
+<div class="arithmatex">\[
+\sigma_{Z,b}
+  = \max\!\left(
+      \frac{p_b}{100}\, \big| y_b^\text{obs} \big| \, \frac{|f_b'(y_b^\text{obs})|}{s_b},\;
+      \sigma_{Z,\min}
+    \right)
+\]</div>
+<p><span class="arithmatex">\(p_b\)</span> may be a single percentage or one percentage per active bin.</p>
+<p>Let <span class="arithmatex">\(w_b\)</span> be the <code>WEIGHT_MODE</code> weight on active bin <span class="arithmatex">\(b\)</span>. Those weights start as shares that sum to 1, so with many bins a typical share is tiny and the whole <span class="arithmatex">\(\chi^2\)</span> shrinks just because the grid is fine. Multiplying by the number of active bins keeps the same proportions and sets the average weight to 1: an average bin counts once, and a bin with twice the average dose counts twice. The widths and the weights are independent of <span class="arithmatex">\(\pmb{\theta}\)</span>, so the log-likelihood up to a constant is the weighted <span class="arithmatex">\(\chi^2\)</span></p>
+<div class="arithmatex">\[
+\log p(\mathbf{y}^\text{obs} \mid \pmb{\theta})
+  = -\frac12 \sum_b w_b
+    \left(
+      \frac{\hat Z_b(\pmb{\theta}) - z_b^\text{obs}}{\sigma_{Z,b}}
+    \right)^2
+\]</div>
+<p>A smaller <span class="arithmatex">\(p_b\)</span> forces bin <span class="arithmatex">\(b\)</span> to be matched more tightly. A larger <span class="arithmatex">\(p_b\)</span> widens the posterior and leaves more room for surrogate error.</p>
+<h3 id="sampling">Sampling<a class="headerlink" href="#sampling" title="Permanent link">&para;</a></h3>
+<p>The default sampler is sequential Monte Carlo (<code>pm.sample_smc</code>). On this posterior it concentrates on one mode, so the corner plot has a single peak and the chains agree. <span class="arithmatex">\(\hat R\)</span> and the effective sample size are then the convergence checks of <a href="#references">Vehtari et al. (2021)</a>: <span class="arithmatex">\(\hat R &lt; 1.01\)</span>, and a large bulk and tail effective sample size for each reported parameter (their rule of thumb is a few hundred). SMC generally reaches that with fewer draws than NUTS. <code>SAMPLING_DRAWS</code> is the particle count per chain. There is no warm-up count.</p>
+<p>NUTS (<a href="#references">Hoffman and Gelman, 2014</a>; the geometric picture is <a href="#references">Betancourt, 2017</a>) is the commented call. It is a local sampler, so separate chains can settle in different modes. That is the run to use when the question is whether more than one geometry fits the spectrum. Those modes disagree, <span class="arithmatex">\(\hat R\)</span> rises, and a longer chain does not merge the peaks. Narrow <code>prior_bounds</code> to the mode you intend to keep, then sample again with SMC or with NUTS. NUTS uses <code>SAMPLING_TUNE</code> to adapt the step size and the mass matrix, and it generally needs more post-tuning draws before the same Vehtari diagnostics settle. Knobs and the two call sites are on the <a href="../../scripts/calibration/#sampling">script page</a>.</p>
+<p>The surrogate inside the model is a PyTensor that:</p>
+<ul>
+<li>scales <span class="arithmatex">\(\pmb{\theta}\)</span> with the training MinMax map,</li>
+<li>evaluates every active bin's Matérn posterior mean as <span class="arithmatex">\(\beta + \sum_i \gamma_i\, k(\pmb{\theta}, \mathbf{x}_i)\)</span>, with the <span class="arithmatex">\(\gamma_i\)</span> stored at fit time,</li>
+<li>returns the Jacobian of that mean with respect to the physical parameters.</li>
+</ul>
+<p>The Jacobian uses the closed form of the half-integer Matérn (<span class="arithmatex">\(\nu = 0.5\)</span>, <span class="arithmatex">\(1.5\)</span>, or <span class="arithmatex">\(2.5\)</span>) and the chain rule through the scaler. Bins that fell back to a constant contribute a zero row.</p>
+<h3 id="posterior-diagnostics">Posterior diagnostics<a class="headerlink" href="#posterior-diagnostics" title="Permanent link">&para;</a></h3>
+<p>ArviZ reports, for the free parameters:</p>
+<ul>
+<li>a <strong>summary table</strong> — mean, standard deviation, <span class="arithmatex">\(\hat R\)</span> (a converged run is near 1.01 or below), and effective sample size (<a href="#references">Vehtari et al., 2021</a>);</li>
+<li>a <strong>trace plot</strong> — chains should mix, without a drift or a stuck stretch;</li>
+<li>a <strong>corner plot</strong> — marginal and joint posterior densities.</li>
+</ul>
+<p>The script also writes the Pearson correlation of the stacked draws, and a second corner plot with the source gap omitted (usually insensitive) so the thicknesses and <span class="arithmatex">\(L\)</span> are easier to read.</p>
+<hr />
+<h2 id="best-sample-selection-and-validation">Best-sample selection and validation<a class="headerlink" href="#best-sample-selection-and-validation" title="Permanent link">&para;</a></h2>
+<h3 id="map-configuration">MAP configuration<a class="headerlink" href="#map-configuration" title="Permanent link">&para;</a></h3>
+<p>The reported geometry is the posterior draw that minimises the same weighted <span class="arithmatex">\(\chi^2\)</span> as the likelihood, in <span class="arithmatex">\(Z\)</span>:</p>
+<div class="arithmatex">\[
+\chi^2(\pmb{\theta})
+  = \sum_b w_b
+    \left(
+      \frac{\hat Z_b(\pmb{\theta}) - z_b^\text{obs}}{\sigma_{Z,b}}
+    \right)^2
+\]</div>
+<p>The script also prints <span class="arithmatex">\(\chi^2 / N_\text{bins}\)</span>. A mean absolute log-relative error in flux units is printed for that draw as a direct reading of the spectrum error. Selection uses <span class="arithmatex">\(\chi^2(\pmb{\theta})\)</span>.</p>
+<h3 id="posterior-predictive-band">Posterior predictive band<a class="headerlink" href="#posterior-predictive-band" title="Permanent link">&para;</a></h3>
+<p>The band is wider than the MAP point. For each draw <span class="arithmatex">\(\pmb{\theta}_s\)</span> and each bin, normal deviates are taken from <span class="arithmatex">\(\mathcal{N}(\hat Z_b(\pmb{\theta}_s),\, \sigma_{\mathrm{GP},b}^2(\pmb{\theta}_s))\)</span> and passed through <span class="arithmatex">\(f_b^{-1}\)</span>. Percentiles of that mixture are the plotted band. The inverse is nonlinear, so the band in flux units is asymmetric. For Box–Cox with <span class="arithmatex">\(\lambda &gt; 0\)</span>, the map only reaches <span class="arithmatex">\(y = 0\)</span> at <span class="arithmatex">\(u = -1/\lambda\)</span>, and deviates below that point are the Gaussian tail spilling past zero flux; they are mapped to <span class="arithmatex">\(y = 0\)</span>. When <span class="arithmatex">\(\lambda\)</span> is close to 1 the map is almost linear, so a wide bin can put its lower percentile exactly at zero, which a log axis draws as a band down to the bottom of the plot.</p>
+<p>The law of total variance in <span class="arithmatex">\(Z\)</span> splits the width into a parameter term, <span class="arithmatex">\(\mathrm{Var}[\hat Z_b(\pmb{\theta})]\)</span>, and a surrogate term, <span class="arithmatex">\(\mathbb{E}[\sigma_{\mathrm{GP},b}^2(\pmb{\theta})]\)</span>. Their ratio, per bin, says whether the band is dominated by the posterior or by the Gaussian process.</p>
+<hr />
+<h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Lartaud et al. (2022). <em>Multi-output Gaussian processes for inverse uncertainty quantification in neutron noise analysis.</em> arXiv:2211.02465. <a href="https://arxiv.org/abs/2211.02465">https://arxiv.org/abs/2211.02465</a></li>
+<li>C. E. Rasmussen and C. K. I. Williams, <em>Gaussian Processes for Machine Learning</em>, MIT Press, 2006. <a href="http://www.gaussianprocess.org/gpml/">Online</a></li>
+<li>M. D. Hoffman and A. Gelman, "The No-U-Turn Sampler: Adaptively Setting Path Lengths in Hamiltonian Monte Carlo", <em>Journal of Machine Learning Research</em>, 15 (2014).</li>
+<li>M. Betancourt, "A Conceptual Introduction to Hamiltonian Monte Carlo", 2017. <a href="https://arxiv.org/abs/1701.02434">arXiv:1701.02434</a></li>
+<li>A. Vehtari, A. Gelman, D. Simpson, B. Carpenter, and P.-C. Bürkner, "Rank-normalization, folding, and localization: An improved <span class="arithmatex">\(\hat R\)</span> for assessing convergence of MCMC", <em>Bayesian Analysis</em>, 16(2) (2021). <a href="https://doi.org/10.1214/20-BA1221">https://doi.org/10.1214/20-BA1221</a></li>
+<li>A. Saltelli et al., <em>Global Sensitivity Analysis: The Primer</em>, Wiley, 2008.</li>
+<li>G. W. Oehlert, "A Note on the Delta Method", <em>The American Statistician</em>, 46(1), 27–29 (1992). <a href="https://doi.org/10.1080/00031305.1992.10475842">https://doi.org/10.1080/00031305.1992.10475842</a></li>
+<li>OpenTURNS, "Gaussian process regression", theory guide. <a href="https://openturns.github.io/openturns/latest/theory/meta_modeling/gaussian_process_regression.html">https://openturns.github.io/openturns/latest/theory/meta_modeling/gaussian_process_regression.html</a></li>
+<li>scikit-learn developers, "Mapping to a Gaussian distribution", preprocessing user guide. <a href="https://scikit-learn.org/stable/modules/preprocessing.html#mapping-to-a-gaussian-distribution">https://scikit-learn.org/stable/modules/preprocessing.html#mapping-to-a-gaussian-distribution</a></li>
+<li>PyMC, <a href="https://docs.pymc.io">docs.pymc.io</a></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.path", "navigation.top", "search.highlight", "search.suggest", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

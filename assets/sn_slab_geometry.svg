@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 430" role="img" aria-labelledby="title desc">
+  <title id="title">Slab geometry for T</title>
+  <desc id="desc">
+    A point source sits in vacuum, some distance to the left of the slab face at z = 0,
+    and fires a monodirectional beam toward +z. Inside the slab the neutron scatters.
+    Transmitted current is tallied on the exit face at z = d in outgoing mu bins.
+    Neutrons that leave the entrance face are lost. A vacuum boundary stands beyond the slab.
+    Dashed lines at the top and bottom of the slice mark that the geometry is infinite in y (1-D).
+  </desc>
+  <rect width="800" height="430" fill="#ffffff"/>
+
+  <text x="24" y="30" font-family="system-ui, Segoe UI, Helvetica, Arial, sans-serif" font-size="21" font-weight="600" fill="#1f2937">Slab geometry for T</text>
+  <text x="24" y="54" font-family="system-ui, Segoe UI, Helvetica, Arial, sans-serif" font-size="17" fill="#6b7280">Fired at left, tallied at right</text>
+
+  <g font-family="system-ui, Segoe UI, Helvetica, Arial, sans-serif" font-size="17" fill="#1f2937">
+    <rect x="430" y="16" width="12" height="12" rx="1" fill="#1d4ed8"/>
+    <text x="448" y="27">Neutron path</text>
+    <rect x="590" y="16" width="12" height="12" rx="1" fill="#b91c1c"/>
+    <text x="608" y="27">Lost at vacuum</text>
+  </g>
+
+  <rect x="475" y="88" width="85" height="210" fill="#eef2f6" stroke="none"/>
+  <rect x="185" y="88" width="290" height="210" fill="#ead7b0" fill-opacity="0.85" stroke="none"/>
+
+  <line x1="185" y1="88" x2="185" y2="298" stroke="#6b7280" stroke-width="1"/>
+  <line x1="475" y1="88" x2="475" y2="298" stroke="#1f2937" stroke-width="1.5"/>
+  <line x1="560" y1="88" x2="560" y2="298" stroke="#6b7280" stroke-width="1"/>
+
+  <g stroke="#6b7280" stroke-width="1.2" stroke-dasharray="7 5" fill="none">
+    <line x1="50" y1="88" x2="560" y2="88"/>
+    <line x1="50" y1="298" x2="560" y2="298"/>
+  </g>
+
+  <g fill="#1d4ed8" fill-opacity="0.14" stroke="#1d4ed8" stroke-width="1">
+    <path d="M 475.0 162.0 L 525.0 162.0 A 50.0 50.0 0 0 0 518.0 136.5 Z"/>
+    <path d="M 475.0 162.0 L 518.0 136.5 A 50.0 50.0 0 0 0 506.7 123.4 Z"/>
+    <path d="M 475.0 162.0 L 506.7 123.4 A 50.0 50.0 0 0 0 493.2 115.4 Z"/>
+    <path d="M 475.0 162.0 L 493.2 115.4 A 50.0 50.0 0 0 0 482.0 112.5 Z"/>
+    <path d="M 475.0 162.0 L 482.0 112.5 A 50.0 50.0 0 0 0 475.0 112.0 Z"/>
+  </g>
+  <path d="M 525.0 162.0 A 50.0 50.0 0 0 0 475.0 112.0" fill="none" stroke="#1d4ed8" stroke-width="1"/>
+
+  <line x1="78" y1="252" x2="118" y2="252" stroke="#9ca3af" stroke-width="1"/>
+  <path d="M 114.0 252.0 A 36.0 36.0 0 0 0 112.2 240.9" fill="none" stroke="#9ca3af" stroke-width="1"/>
+
+  <polyline points="78,252 185,217.2 245,218 318,258 395,188 475,162" fill="none" stroke="#1d4ed8" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+  <polygon points="129.4,235.3 120.9,242.3 118.4,234.6" fill="#1d4ed8"/>
+  <polygon points="475.0,162.0 468.9,167.1 467.0,161.5" fill="#1d4ed8"/>
+
+  <line x1="318" y1="258" x2="95" y2="168" stroke="#b91c1c" stroke-width="1.7" stroke-dasharray="5 4"/>
+  <polygon points="95.0,168.0 103.0,168.0 100.8,173.5" fill="#b91c1c"/>
+
+  <circle cx="78" cy="252" r="5.2" fill="#1d4ed8" stroke="#1f2937" stroke-width="1"/>
+  <circle cx="245" cy="218" r="3.6" fill="#ffffff" stroke="#1f2937" stroke-width="1"/>
+  <circle cx="318" cy="258" r="3.6" fill="#ffffff" stroke="#1f2937" stroke-width="1"/>
+  <circle cx="395" cy="188" r="3.6" fill="#ffffff" stroke="#1f2937" stroke-width="1"/>
+
+  <g stroke="#9ca3af" fill="none" stroke-width="1">
+    <path d="M 185 316 L 185 324 M 475 316 L 475 324 M 185 320 L 475 320"/>
+  </g>
+
+  <line x1="185" y1="370" x2="185" y2="386" stroke="#000000" stroke-width="1.6"/>
+  <line x1="185" y1="378" x2="268" y2="378" stroke="#000000" stroke-width="1.6"/>
+  <polygon points="281.7,378 268.0,372.5 268.0,383.5" fill="#000000"/>
+
+  <g font-family="system-ui, Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#1f2937">
+    <text text-anchor="middle" x="330" y="112">slab</text>
+    <text text-anchor="end" x="467" y="80">tally: current</text>
+    <text text-anchor="end" x="68" y="248">source</text>
+    <text text-anchor="end" x="68" y="270">&#x3BC;_in</text>
+    <text text-anchor="middle" x="108" y="247">&#x3B8;</text>
+    <text text-anchor="middle" x="500" y="148">&#x3BC;_out</text>
+    <text text-anchor="start" x="288" y="384">z</text>
+  </g>
+  <g font-family="system-ui, Segoe UI, Helvetica, Arial, sans-serif" font-size="17" fill="#6b7280">
+    <text text-anchor="start" x="572" y="80">vacuum boundary</text>
+    <text text-anchor="middle" x="330" y="346">Thickness</text>
+  </g>
+</svg>

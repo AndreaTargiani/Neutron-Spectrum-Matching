@@ -1,0 +1,2981 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A Monte Carlo driven, surrogate-accelerated framework for neutron spectrum matching via Bayesian Calibration.">
+      
+      
+      
+        <link rel="canonical" href="https://AndreaTargiani.github.io/Neutron-Spectrum-Matching/example/demo_vv/">
+      
+      
+        <link rel="prev" href="../../scripts/read_opt/">
+      
+      
+        <link rel="next" href="../../theory/sn_transfer_operator/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/logo.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Example - Neutron Spectrum Bayesian Matching</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#example-demo-vacuum-vessel" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Neutron Spectrum Bayesian Matching" class="md-header__button md-logo" aria-label="Neutron Spectrum Bayesian Matching" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Neutron Spectrum Bayesian Matching
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Example
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/AndreaTargiani/Neutron-Spectrum-Matching" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Neutron-Spectrum-Matching
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../scripts/config/" class="md-tabs__link">
+          
+  
+  
+  Pipeline
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Example
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../theory/sn_transfer_operator/" class="md-tabs__link">
+          
+  
+  
+  Theory
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Neutron Spectrum Bayesian Matching" class="md-nav__button md-logo" aria-label="Neutron Spectrum Bayesian Matching" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    Neutron Spectrum Bayesian Matching
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/AndreaTargiani/Neutron-Spectrum-Matching" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Neutron-Spectrum-Matching
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipeline
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Pipeline
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configure
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Configure
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/config_materials/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config_materials.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/config_detector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config_detector.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_1_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_1_4" id="__nav_2_1_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Optional
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_1_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Optional
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/rebin_target_spectrum/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rebin_target_spectrum.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/bin_weights/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    bin_weights.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transfer tensors
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Transfer tensors
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/transfer_matrix/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    transfer_matrix.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Optimize
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Optimize
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/optimizer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    optimizer.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3_2" id="__nav_2_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Optional
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Optional
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/read_opt/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    read_opt.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validate
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Validate
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/base_plates/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    base_plates.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dataset
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Dataset
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/dataset_creation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    dataset_creation.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_2" id="__nav_2_5_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Optional
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Optional
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/analize_dataset/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    analize_dataset.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Calibrate
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Calibrate
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/calibration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    calibration.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7" id="__nav_2_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Utilities
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Utilities
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/utilities/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Optional scripts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/rebin_target_spectrum/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rebin_target_spectrum.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/bin_weights/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    bin_weights.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/read_opt/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    read_opt.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Example
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Example
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-this-page-is" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What this page is
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-this-spectrum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why this spectrum
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-do-this-framework" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why do this framework
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configure
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#source-and-raw-spectrum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Source and raw spectrum
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#working-spectrum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Working spectrum
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#materials" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Materials
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#detector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Detector
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#weights" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Weights
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#transfer-tensors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Transfer tensors
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optimize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optimize
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validate
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Validate">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#geometry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Geometry
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spectrum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Spectrum
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#weight-windows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Weight windows
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dataset
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dataset">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-check-on-the-csv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A check on the CSV
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#calibrate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Calibrate
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Calibrate">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#surrogate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Surrogate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#posterior" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Posterior
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#one-openmc-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        One OpenMC check
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusion
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        References
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Theory
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Theory
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../theory/sn_transfer_operator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    S_N Transfer Operator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../theory/optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Material Arrangement Optimizer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../theory/bayesian_calibration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bayesian Calibration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-this-page-is" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What this page is
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-this-spectrum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why this spectrum
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-do-this-framework" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why do this framework
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configure
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#source-and-raw-spectrum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Source and raw spectrum
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#working-spectrum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Working spectrum
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#materials" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Materials
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#detector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Detector
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#weights" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Weights
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#transfer-tensors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Transfer tensors
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optimize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optimize
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validate
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Validate">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#geometry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Geometry
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spectrum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Spectrum
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#weight-windows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Weight windows
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dataset
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dataset">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-check-on-the-csv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A check on the CSV
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#calibrate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Calibrate
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Calibrate">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#surrogate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Surrogate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#posterior" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Posterior
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#one-openmc-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        One OpenMC check
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusion
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        References
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="example-demo-vacuum-vessel">Example — DEMO vacuum vessel<a class="headerlink" href="#example-demo-vacuum-vessel" title="Permanent link">&para;</a></h1>
+<h2 id="what-this-page-is">What this page is<a class="headerlink" href="#what-this-page-is" title="Permanent link">&para;</a></h2>
+<p>This page is one full example of the framework. The aim is a bench experiment whose neutron spectrum matches the spectrum a detector would see at the DEMO vacuum vessel. The source on the bench is a compact 14 MeV DT neutron generator.</p>
+<p>The Pipeline pages explain each script on its own. Here the same scripts are used in order, with the choices made for this one case and some comments.</p>
+<h2 id="why-this-spectrum">Why this spectrum<a class="headerlink" href="#why-this-spectrum" title="Permanent link">&para;</a></h2>
+<p>The target is called <strong>DEMO-HCPB-VV</strong>. It is the neutron spectrum in the vacuum vessel of DEMO, for the helium-cooled pebble-bed blanket.</p>
+<p>At the time of writing, It is published as open data with <a href="https://fispact.ukaea.uk/wiki/Reference_input_spectra">FISPACT-II</a>. Anyone can download it and repeat the example. That is why I use it here.</p>
+<h2 id="why-do-this-framework">Why do this framework<a class="headerlink" href="#why-do-this-framework" title="Permanent link">&para;</a></h2>
+<p>Neutron diagnostics — dose-rate meters, neutron cameras, and also TLDs — matter for the safety of a fusion plant and for watching how it runs. Calibrating them is the slow part.</p>
+<p>The reference method is an in-situ calibration: a source is taken inside the vessel by remote handling, as done at JET <a href="#ref-1">[1]</a>. That needs a shutdown, custom robotics, weeks of campaign time, and a cost few labs can pay often.</p>
+<p>The same job can be done outside the machine. Take the spectrum the detector will see in its real position, and build a bench setup that matches it. With that spectrum and a compact 14 MeV DT generator, this framework designs the experiment first: which materials, how thick, and how sure that answer is, before any measurement. The setup is then built for real, and the calibration factor comes from that measurement, for much less time and money than an in-vessel campaign.</p>
+<h2 id="configure">Configure<a class="headerlink" href="#configure" title="Permanent link">&para;</a></h2>
+<p>This step sets the source, the spectrum, the materials, and the detector. The full lists of settings are on the script pages. Here I only write what this example uses, and the figures you should look at before moving on.</p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Where</th>
+<th>Figure</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#source-and-raw-spectrum">Source and raw spectrum</a></td>
+<td><a href="../../scripts/config/"><code>config.py</code></a></td>
+<td>none</td>
+</tr>
+<tr>
+<td><a href="#working-spectrum">Working spectrum</a></td>
+<td><a href="../../scripts/rebin_target_spectrum/"><code>rebin_target_spectrum.py</code></a></td>
+<td>rebin comparison</td>
+</tr>
+<tr>
+<td><a href="#materials">Materials</a></td>
+<td><a href="../../scripts/config_materials/"><code>config_materials.py</code></a></td>
+<td>none</td>
+</tr>
+<tr>
+<td><a href="#detector">Detector</a></td>
+<td><a href="../../scripts/config_detector/"><code>config_detector.py</code></a></td>
+<td>response fit</td>
+</tr>
+<tr>
+<td><a href="#weights">Weights</a></td>
+<td><a href="../../scripts/bin_weights/"><code>bin_weights.py</code></a></td>
+<td>dose coefficient, dose rate</td>
+</tr>
+</tbody>
+</table>
+<h3 id="source-and-raw-spectrum">Source and raw spectrum<a class="headerlink" href="#source-and-raw-spectrum" title="Permanent link">&para;</a></h3>
+<p>The bench source is something similar to the Frascati Neutron Generator (FNG), a DT source. In <code>config.py</code> it is a Gaussian.</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value in this example</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SOURCE_KIND</code></td>
+<td><code>"gaussian"</code></td>
+<td>A narrow peak around 14 MeV</td>
+</tr>
+<tr>
+<td><code>mean</code></td>
+<td>14.8 MeV</td>
+<td>Peak energy of this generator. FNG can reach this energy and higher. The peak is set here so the source can fill the highest target group that still has neutrons</td>
+</tr>
+<tr>
+<td><code>fwhm</code></td>
+<td>0.3 MeV</td>
+<td>Width of that peak</td>
+</tr>
+<tr>
+<td><code>n_bins</code></td>
+<td>5</td>
+<td>How many slices the peak is split into</td>
+</tr>
+</tbody>
+</table>
+<p>The raw target is the FISPACT-II file as published: 616 energy groups, and the values are flux per unit lethargy, so <code>RAW_TARGET_VALUES_ARE_LETHARGY = True</code>.</p>
+<p>The choosen working grid is VITAMIN-J, 175 groups, from 0.01 eV to 19.64 MeV. Every later script matches on this grid.</p>
+<h3 id="working-spectrum">Working spectrum<a class="headerlink" href="#working-spectrum" title="Permanent link">&para;</a></h3>
+<p>The FISPACT grid and the VITAMIN-J grid are not the same, so the spectrum has to be moved across. Run:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>python<span class="w"> </span>src/rebin_target_spectrum.py
+</span></code></pre></div>
+<p>Check the figure, then paste <code>target_spectrum_rebinned.npy</code> into <code>TARGET_VALUES</code>. In this example I choose to save values in neutrons per group, so <code>PHI_TARGET_IN_LETHARGY = False</code>.</p>
+<p><img alt="Raw DEMO-HCPB-VV spectrum and the same spectrum on the VITAMIN-J grid" src="../../assets/target_spectrum_rebin_comparison.png" style="display:block;margin:0 auto;width:100%;max-width:100%" /></p>
+<p>Three panels, same two curves. Blue is the 616-group file. Red is the 175-group result. The per-group panel is on its own row, because that is the quantity the rest of the pipeline uses.</p>
+<ul>
+<li><strong>Top left.</strong> Flux per unit lethargy. The two curves follow each other. The blue line is spikier, because many of those groups are very narrow. The red line averages them.</li>
+<li><strong>Top right.</strong> Flux per unit energy. This is the check that the move did not invent or lose neutrons. The two lines sit on top of each other.</li>
+<li><strong>Bottom.</strong> Neutrons per group. The red steps are much taller at low energy. A VITAMIN-J group is wider, so it holds more neutrons. This panel only shows how many neutrons sit in each group.</li>
+</ul>
+<p>Groups that are exactly zero are dropped.</p>
+<h3 id="materials">Materials<a class="headerlink" href="#materials" title="Permanent link">&para;</a></h3>
+<p>The library is in <a href="../../scripts/config_materials/"><code>config_materials.py</code></a>. Compositions come from the PNNL compendium <a href="#ref-2">[2]</a>. Prices are dollars per kilogram, mostly from the USGS Mineral Commodity Summaries <a href="#ref-3">[3]</a>.</p>
+<p>I picked these materials because they make sense for a bench. Most of them change a neutron spectrum in a useful way. They are also practical: machinable, easy to buy, or already used in the field.</p>
+<p>This step does not pick a stack. The optimizer does that later, from a subset of this library.</p>
+<h3 id="detector">Detector<a class="headerlink" href="#detector" title="Permanent link">&para;</a></h3>
+<p>The detector in this example is a bare air sphere, 4 cm across. That sphere is the tallied volume.</p>
+<p>The energy response is an 18-point table, from 0.02 eV to 18 MeV. I made these numbers up. They are not the response of a real instrument. They are only here so you can see how the framework takes a response curve, fits it, and uses it later. Swap in your own table if and when you have one.</p>
+<p>Running the file fits a curve through those points and draws it on the working grid:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>python<span class="w"> </span>src/config_detector.py
+</span></code></pre></div>
+<p><img alt="Detector response and the polynomial degree that was kept" src="../../assets/detector_response_fit.png" style="display:block;margin:0 auto;width:40rem;max-width:100%" /></p>
+<p><strong>Top.</strong> Orange diamonds are the 18 made-up numbers. The blue curve is the fit, and the blue dots are that fit at the middle of each VITAMIN-J group. The pale bands at the two ends are outside the orange points. There the curve is only extended, with no point to hold it.</p>
+<p><strong>Bottom.</strong> Each point is the error of a polynomial of that degree, tested by leaving one input point out at a time. Degree 5 is the lowest. From degree 6 upward the error grows, so a wigglier curve would do worse.</p>
+<h3 id="weights">Weights<a class="headerlink" href="#weights" title="Permanent link">&para;</a></h3>
+<p><code>WEIGHT_MODE</code> in <code>config.py</code> is <code>"ICRP"</code>. The coefficient is ambient dose equivalent H*(10), from ICRP 74.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>python<span class="w"> </span>src/bin_weights.py
+</span></code></pre></div>
+<p><img alt="H*(10) and the same coefficient times the detector response" src="../../assets/dose_coefficients.png" style="display:block;margin:0 auto;width:40rem;max-width:100%" /></p>
+<p>H*(10) is the dose per neutron. The red curve is that coefficient times the made-up detector response. It climbs in the same place, and it sits much lower, because those made up response numbers are small. </p>
+<p><img alt="Dose rate of the DEMO vacuum-vessel spectrum, bin by bin" src="../../assets/target_dose_rate.png" style="display:block;margin:0 auto;width:40rem;max-width:100%" /></p>
+<p>This is the coefficient times the vessel spectrum, one step per energy group.</p>
+<ul>
+<li>Both curves peak between about 0.1 and 1 MeV. That is the band the match will care about most.</li>
+<li>Above 10 MeV both curves drop away. There is little flux left up there, so the generator peak carries little of the dose.</li>
+<li>The blue curve is the true dose. That is what <code>ICRP</code> weights. The red curve is what a detector with this made-up response would report, which is what <code>dose</code> would weight.</li>
+<li>The shapes agree on where the peak is.</li>
+</ul>
+<p>I keep <code>ICRP</code>. The weights then follow the true dose of the vessel spectrum.</p>
+<h2 id="transfer-tensors">Transfer tensors<a class="headerlink" href="#transfer-tensors" title="Permanent link">&para;</a></h2>
+<p>The optimizer does not run OpenMC for every plate stack. It reuses a database: for each material and each thickness, what comes out of a slab when a beam goes in. <a href="../../scripts/transfer_matrix/"><code>transfer_matrix.py</code></a> builds that database. It is a slow step. Rebuild it only if the energy grid, the source, the material list, or the thicknesses change.</p>
+<p>The sketch below is the geometry of one run. A beam enters the slab from the left. Neutrons that leave the entrance face are lost. The tally is the current that exits on the right, split by outgoing angle. One run is one incoming direction and one incoming energy. The file stores all of those runs for one material and one thickness.</p>
+<p><img alt="Slab used for one transfer calculation: beam in on the left, current tallied on the exit face" src="../../assets/sn_slab_geometry.svg" style="display:block;margin:0 auto;width:36rem;max-width:100%" /></p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value in this example</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MATERIALS</code></td>
+<td>20 materials from the material library <a href="#materials">defined before</a></td>
+<td>These are the ones the optimizer is allowed to use later</td>
+</tr>
+<tr>
+<td><code>THICKNESSES</code></td>
+<td>0.2, 0.8, 3, 10, 28, 75, 130 cm</td>
+<td>Thin sheet up to a thick block, spaced so each they are evenly spaced in log space</td>
+</tr>
+<tr>
+<td><code>N_MU</code></td>
+<td>5</td>
+<td>Five forward directions</td>
+</tr>
+</tbody>
+</table>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>python<span class="w"> </span>src/transfer_matrix.py
+</span></code></pre></div>
+<p>The files land in <code>opt_database/</code>, two per material and thickness: <code>sn_tensor_{material}_{thickness}cm.npy</code> and the same name with <code>_std</code>. The first is the result. The second is the Monte Carlo uncertainty. The physics is on the <a href="../../theory/sn_transfer_operator/">transfer-operator page</a>.</p>
+<div class="admonition tip">
+<p class="admonition-title">Do this once</p>
+<p>A full grid takes hours. After it exists, the optimizer only reads the files.</p>
+</div>
+<h2 id="optimize">Optimize<a class="headerlink" href="#optimize" title="Permanent link">&para;</a></h2>
+<p><a href="../../scripts/optimizer/"><code>optimizer.py</code></a> searches plate stacks. It does not run OpenMC. Each candidate is a product of the tensors from the last step. Two things are scored at once: how close the spectrum is, and how much the plates cost. The result is a front of good compromises, not one winner.</p>
+<p>The detector here is a bare sphere, so nothing is added behind the stack. If a trial picks water, a 1 cm aluminium wall (<code>Al_6061</code>) is put on each face of that layer. Those walls are not chosen by the search. They do count in the cost and in the thickness limit.</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value in this example</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MATERIALS</code></td>
+<td>The same 20 as the tensor database</td>
+<td>A name with no tensor file cannot be searched</td>
+</tr>
+<tr>
+<td><code>max_total_thickness</code></td>
+<td>160 cm</td>
+<td>Soft cap on the whole stack. A thicker trial is kept, but down-weighted</td>
+</tr>
+<tr>
+<td><code>max_layers</code></td>
+<td>9</td>
+<td>Hard cap. The search never proposes more plates</td>
+</tr>
+<tr>
+<td><code>max_thickness_per_layer</code></td>
+<td>130 cm</td>
+<td>Hard cap</td>
+</tr>
+<tr>
+<td><code>MIN_THICKNESS</code>, <code>THICKNESS_STEP</code></td>
+<td>0.2 cm, 0.1 cm</td>
+<td>Thinnest plate, and the step every thickness is snapped to</td>
+</tr>
+<tr>
+<td><code>ERROR_REF</code>, <code>COST_REF</code></td>
+<td>0.3 and 2 USD/cm<span class="arithmatex">\(^2\)</span></td>
+<td>Puts a decent match and a modest cost on the same scale</td>
+</tr>
+<tr>
+<td><code>N_RESTARTS</code></td>
+<td>42</td>
+<td>Independent searches because the solution landscape cna have multiple local optima, different seeds</td>
+</tr>
+<tr>
+<td><code>N_TRIALS_EACH</code>, <code>PATIENCE</code></td>
+<td>4400, stop after 400 trials with no improvement</td>
+<td>Ideally, a restart should stop because the front stalled, not because it hit the cap</td>
+</tr>
+</tbody>
+</table>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>python<span class="w"> </span>src/optimizer.py
+</span></code></pre></div>
+<p>Two figures are written next to the script.</p>
+<p><img alt="Cost against spectral error for every trial, with the Pareto front" src="../../assets/cost_error_tradeoff.png" style="display:block;margin:0 auto;width:44rem;max-width:100%" /></p>
+<p>Horizontal is cost. Vertical is spectral error. Lower is a closer spectrum. The cloud is every trial. Paler dots are trial that violated the soft constraint. The red line is the front: on that line, a cheaper stack is a worse match, and a closer match costs more. The colour of those dots is the number of plates.</p>
+<p>The line drops fast, then goes flat near an error of about 0.3. Past that bend, more money barely helps. The gold star is that bend. The blue triangle is the smallest error, far to the right, for almost the same match and several times the cost. The dashed gold curve is the equal-weight contour through the star. The vertical axis stops at 1.5 so the front stays readable. Trials worse than that are off the top.</p>
+<p><img alt="Material order of the best sequences. Bar length is the spectral error" src="../../assets/pareto_designs.png" style="display:block;margin:0 auto;width:100%;max-width:100%" /></p>
+<p>Each row is one material order. The bar length is the error again, so a shorter bar is a closer spectrum. The colours are the materials, and the text gives the thicknesses and the cost. The arrangement with the lowest error is at the top.</p>
+<p>The star from the first figure is the row <code>cast_iron → HDPE</code>: a thick iron plate and a thin polyethylene sheet, about 1 USD/cm<span class="arithmatex">\(^2\)</span>. The blue triangle is the top row, brass then steel then polyethylene, about 6 USD/cm<span class="arithmatex">\(^2\)</span>, for a slightly shorter bar. The long dark bar is a very cheap concrete stack. It is on the front, and the match is much worse. Hatched bars under the dashed line showed up often in the search. They are not on the front.</p>
+<p>I choose to test the gold star proposed arrangement. The extra money for the smallest error does not buy a meaningful closer spectrum. One stack from this list is what the next scripts calibrate. The full knob list is on the <a href="../../scripts/optimizer/">optimizer page</a>.</p>
+<div class="admonition tip">
+<p class="admonition-title">Reprint without searching again</p>
+<p><a href="../../scripts/read_opt/"><code>read_opt.py</code></a> reloads <code>study_results_multistart.pkl</code> and redraws these two figures.</p>
+</div>
+<h2 id="validate">Validate<a class="headerlink" href="#validate" title="Permanent link">&para;</a></h2>
+<p><a href="../../scripts/base_plates/"><code>base_plates.py</code></a> is the forward model. Later scripts ask it for a spectrum. Up to here the plates were infinite slabs. This is the 3-D check of the one stack I kept: the plates are finite and the tally is the same 4 cm air sphere.</p>
+<p>I keep this geometry very simple on purpose. Flat plates, one material each, a bare detector. It can be made much more complicated when a real bench needs that: a different shape, more parts, a real instrument body, the room where the experiment is going to be performed. The method still works. Dataset and calibration only need the spectrum back on the same energy grid. The full rule is on the <a href="../../scripts/base_plates/">base plates page</a>.</p>
+<p>I set the equal-weight knee (gold star from before) arrangement and thicknesses into the file. Cast iron first, then a thin sheet of HDPE.</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value in this example</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MATERIALS</code></td>
+<td><code>cast_iron</code>, <code>HDPE</code></td>
+<td>The equal-weight knee arrangement from the last step</td>
+</tr>
+<tr>
+<td><code>THICKNESSES</code></td>
+<td>66.50 cm, 1.20 cm</td>
+<td>Thick iron, then the polyethylene sheet as suggested by the last step</td>
+</tr>
+<tr>
+<td><code>PLATE_DIM</code></td>
+<td>30 cm</td>
+<td>Square side of the finite plates</td>
+</tr>
+<tr>
+<td><code>X_START</code></td>
+<td>0.1 cm</td>
+<td>Gap from the point source to the first face</td>
+</tr>
+<tr>
+<td><code>CE_BATCHES</code>, <code>CE_PARTICLES</code></td>
+<td>100, 150 000</td>
+<td>So the uncertainty band on the spectrum stays thin</td>
+</tr>
+<tr>
+<td><code>PLOT_WW_BIN</code></td>
+<td>5</td>
+<td>Draw one weight-window group that is plotted</td>
+</tr>
+<tr>
+<td><code>SOURCE_STRENGTH</code></td>
+<td><code>5e9</code></td>
+<td>Neutrons per second emitted by the neutron generator. It only scales the real-units figure</td>
+</tr>
+</tbody>
+</table>
+<p>Angle bias is on (<code>USE_ANGLE_BIAS = True</code>). The point source prefers directions that hit the plates. The mesh, the ray count, and the thread counts are on the <a href="../../scripts/base_plates/">base plates page</a>.</p>
+<p>The run has two phases. Phase 1 builds weight windows (FW-CADIS). A source is placed in the detector and run backwards, and neutrons that head toward it are split, so the tally is quieter. The windows change the sampling. The physics stays the same. The group strengths follow <code>WEIGHT_MODE</code>, which is <code>ICRP</code>. Phase 2 is the continuous-energy tally that uses the windows.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>python<span class="w"> </span>src/base_plates.py
+</span></code></pre></div>
+<p>Four figures. Geometry first, then the two spectrum comparisons, then the weight-window map. The terminal also prints a bin table and one line, <code>Weighted Log-RMSE = ...</code>. That number is calculated in the way as the optimizer but now on this 3-D geometry.</p>
+<h3 id="geometry">Geometry<a class="headerlink" href="#geometry" title="Permanent link">&para;</a></h3>
+<p><img alt="Side, top, and end cuts of the cast-iron and HDPE plates, with the air-sphere detector" src="../../assets/geometry_plot.png" style="display:block;margin:0 auto;width:100%;max-width:100%" /></p>
+<p>Three cuts of the same model. The legend is the materials. Red is the tally volume, the bare air sphere. Pale is the air around the experiment.</p>
+<ul>
+<li><strong>Left and middle.</strong> Side view and top view, zoomed on the plates. The long orange block is the 66.50 cm of cast iron. The dark blue line on its right face is the 1.20 cm of HDPE. The red dot just after that line is the 4 cm detector. The source is a point at <span class="arithmatex">\(x = 0\)</span>, 0.1 cm before the iron.</li>
+<li><strong>Right.</strong> A cut at <span class="arithmatex">\(x = 35.95\)</span> cm, inside the iron. The view is the whole air sphere, 300 cm in radius, so the 30 cm plate is a small square in the middle. HDPE and the detector are downstream of this plane.</li>
+</ul>
+<h3 id="spectrum">Spectrum<a class="headerlink" href="#spectrum" title="Permanent link">&para;</a></h3>
+<p><img alt="Integral-normalised OpenMC spectrum against the DEMO vacuum-vessel target" src="../../assets/neutron_spectrum_log_log.png" style="display:block;margin:0 auto;width:44rem;max-width:100%" /></p>
+<p>Both curves are normalised so the groups sum to one. Blue is OpenMC. The pale band is its Monte Carlo uncertainty, one standard deviation. The red dashed line is the vessel target. Groups where the target is exactly zero are left off. Both axes are logarithmic.</p>
+<p>I continue with this geometry. The shape is already almost there, and the two curves agree in general. That looks promising enough.</p>
+<p><img alt="OpenMC flux in real units, with the stored target drawn on the same axes" src="../../assets/neutron_spectrum_real_log_log.png" style="display:block;margin:0 auto;width:44rem;max-width:100%" /></p>
+<p>Same energy axis, same two curves. The vertical axis is now neutrons per square centimetre per second. The blue curve is the OpenMC tally times <code>SOURCE_STRENGTH</code> (<code>5e9</code> neutrons per second), divided by the detector volume. The red curve is the stored target, still in neutrons per group.</p>
+<div class="admonition warning">
+<p class="admonition-title">Absolute flux is out of reach (in this example)</p>
+<p>The red curve sits near the top of the axes and the blue curve sits near the bottom. That offset is expected. The vessel flux peaks near <span class="arithmatex">\(10^{9}\)</span> neutrons per square centimeter per second. A portable neutron generator emits at most about <span class="arithmatex">\(10^{10}\)</span> neutrons per second, and this bench is already set near that, at <code>5e9</code>. An absolute calibration is of real interest. For this spectrum and this source, it is out of reach. Judge the shape on the normalised figure above.</p>
+</div>
+<h3 id="weight-windows">Weight windows<a class="headerlink" href="#weight-windows" title="Permanent link">&para;</a></h3>
+<p>Phase 1 writes <code>ww_generation/weight_windows.h5</code>. Eleven energy groups are stored. <code>PLOT_WW_BIN = 5</code>, so the drawn file is <code>ww_bounds_bin_5.png</code>.</p>
+<p><img alt="Weight-window lower and upper bounds for energy bin 5, side cut and top cut" src="../../assets/ww_bounds_bin_5.png" style="display:block;margin:0 auto;width:100%;max-width:100%" /></p>
+<p>Four panels, one group. The top row are the lower bounds of the window. The bottom row are the uppper bounds. The left column is a side cut. The right column is a top cut.</p>
+<p>The colour goes from yellow at the source, on the left, to purple at the detector, on the right. Neutrons that have crossed the iron are split, which is what the windows are for. The white lines are the plate faces. The dotted circle at the right is the detector. The map is smooth, so the windows are usable.</p>
+<p>Phase 2 writes the statepoint in <code>ce_run/</code>. That folder has no plot of its own.</p>
+<div class="admonition tip">
+<p class="admonition-title">Drop a bad stack here</p>
+<p>Dataset and calibration call this same model. If the normalised spectrum is still far from the target at a larger <code>PLATE_DIM</code>, the materials are the problem. Fix that here, before spending a dataset on the stack.</p>
+</div>
+<h2 id="dataset">Dataset<a class="headerlink" href="#dataset" title="Permanent link">&para;</a></h2>
+<p>The training set for this example is already in the repository, at <code>examples/demo_hcpb_vv.csv</code>. The check and the calibration below read that file, so you can follow them without running the OpenMC sweep.</p>
+<p><a href="../../scripts/dataset_creation/"><code>dataset_creation.py</code></a> is what filled that table. The materials stay the stack I just kept: cast iron, then HDPE. Four numbers move: the gap, the iron thickness, the HDPE thickness, and the plate size <span class="arithmatex">\(L\)</span>. Each row is one run of the same forward model. The settings below are the ones that produced the given CSV, if you want to rebuild it.</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value in this example</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MATERIALS</code></td>
+<td><code>cast_iron</code>, <code>HDPE</code></td>
+<td>Same order as the 3-D check</td>
+</tr>
+<tr>
+<td><code>X_START_BOUNDS</code></td>
+<td>0.1 cm to 5 cm</td>
+<td>The check used a 0.1 cm gap. Here the gap can move</td>
+</tr>
+<tr>
+<td><code>THICKNESS_BOUNDS</code></td>
+<td>iron 30–95 cm, HDPE 0.1–20 cm</td>
+<td>A box around the 66.50 cm and 1.20 cm of the check</td>
+</tr>
+<tr>
+<td><code>L_BOUNDS</code></td>
+<td>25 cm to 90 cm</td>
+<td>Square plate side. The check was 30 cm</td>
+</tr>
+<tr>
+<td><code>N_SAMPLES</code></td>
+<td>350</td>
+<td>How many new points this run asks for</td>
+</tr>
+<tr>
+<td><code>SOBOL_SEED</code></td>
+<td>42</td>
+<td>Same seed, same points, same order</td>
+</tr>
+<tr>
+<td><code>CE_BATCHES</code>, <code>CE_PARTICLES</code></td>
+<td>100, 200 000</td>
+<td>Particles and batches of Phase 2, choosen to give a low uncertainty along the whole spectrum while still being computationally affordable</td>
+</tr>
+<tr>
+<td><code>OUTPUT_CSV</code></td>
+<td><code>examples/demo_hcpb_vv.csv</code></td>
+<td>Already included. The calibration reads this file</td>
+</tr>
+</tbody>
+</table>
+<p>The points are a Sobol sequence. The count, the seed, and what <code>--refine</code> does are on the <a href="../../scripts/dataset_creation/">dataset page</a>.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>python<span class="w"> </span>src/dataset_creation.py
+</span></code></pre></div>
+<p>The script asks for 350 points. A sample that (eventually) fails is left out of the file, and the next success keeps the next index, so a failure shows up as a hole.</p>
+<h3 id="a-check-on-the-csv">A check on the CSV<a class="headerlink" href="#a-check-on-the-csv" title="Permanent link">&para;</a></h3>
+<p><a href="../../scripts/analize_dataset/"><code>analize_dataset.py</code></a> is optional. It only reads the CSV and draws. I run it before the fit. It answers two questions: how many samples are quiet enough in each energy group, and which transform makes those fluxes look more like a gaussian curve.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>python<span class="w"> </span>src/analize_dataset.py
+</span></code></pre></div>
+<p><code>CSV_PATH</code> points at <code>../examples/demo_hcpb_vv.csv</code> (the training set in <code>examples/</code>). The script writes seven figures next to that file. Two of them are below.</p>
+<p><img alt="Fraction of samples under each uncertainty cut, one point per energy bin" src="../../assets/survival_by_bin.png" style="display:block;margin:0 auto;width:44rem;max-width:100%" /></p>
+<p>Horizontal is the energy-bin index. Vertical is the fraction of the 341 samples whose relative uncertainty stays under the cut. The grey dashed line is every sample.</p>
+<ul>
+<li><strong>Black.</strong> The cut in <code>calibration.py</code>, 50%. It stays near the top for most bins and falls on the last bins, the fast end of the grid.</li>
+<li><strong>Blue.</strong> A tighter cut, 30%. Same shape, lower. The last bins fall further.</li>
+<li><strong>Orange.</strong> A loose cut, 100%. It sits on the top line until that same last drop.</li>
+</ul>
+<p>At the 50% cut, most bins keep most of their samples. The last bins are the noisy ones.</p>
+<p><img alt="Three scores for each candidate transform, across all active bins" src="../../assets/transform_ranking.png" style="display:block;margin:0 auto;width:100%;max-width:100%" /></p>
+<p>Three scores. Lower skew is better. Higher QQ correlation is better. The right-hand panel is the fraction of bins that pass a normality check.</p>
+<ul>
+<li><strong>Left.</strong> Box–Cox is the short red bar. The raw flux, <code>identity</code>, is the tall grey bar.</li>
+<li><strong>Middle.</strong> Box–Cox, log, and Yeo–Johnson all sit near 1. The raw flux is the lowest.</li>
+<li><strong>Right.</strong> Box–Cox is the tall bar. Log is next. Several transforms do not clear the check in any bin.</li>
+</ul>
+<p>I choose Box–Cox. It is the clear winner, and I set that choice in the next script.</p>
+<p><img alt="Histograms of a few bins after each transform" src="../../assets/transform_hist_detail.png" style="display:block;margin:0 auto;width:100%;max-width:100%" /></p>
+<p>Each row is one energy bin. Each column is one transform. A bell shape is what the fit wants. The grey column, the raw flux, is a spike against one side. The red column, Box–Cox, is the closest to a bell. A few rows stay lumpy for every transform.</p>
+<p>The script writes several more figures. I leave them out of this page for brevity.</p>
+<h2 id="calibrate">Calibrate<a class="headerlink" href="#calibrate" title="Permanent link">&para;</a></h2>
+<p><a href="../../scripts/calibration/"><code>calibration.py</code></a> is the last step. It learns the CSV, then it finds the gap, the two thicknesses, and the plate size that bring the bench close to the vessel spectrum. The materials stay cast iron, then HDPE. One OpenMC run at the end checks that answer. The full knob list is on the <a href="../../scripts/calibration/">calibration page</a>. The sampling is on the <a href="../../theory/bayesian_calibration/">theory page</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value in this example</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CSV_PATH</code></td>
+<td><code>examples/demo_hcpb_vv.csv</code></td>
+<td>The CSV from the last step</td>
+</tr>
+<tr>
+<td><code>Y_TRANSFORM</code></td>
+<td><code>"boxcox"</code></td>
+<td>The transform I decided to with after the ranking figure</td>
+</tr>
+<tr>
+<td><code>UNC_LIMIT</code></td>
+<td>0.50</td>
+<td>A row noisier than 50% is left out of that bin</td>
+</tr>
+<tr>
+<td><code>MATERN_NU</code></td>
+<td>0.5</td>
+<td>One rough Gaussian process per energy bin</td>
+</tr>
+<tr>
+<td><code>USE_MC_NOISE</code></td>
+<td><code>True</code></td>
+<td>The Monte Carlo error on each row is included in the fit</td>
+</tr>
+<tr>
+<td><code>LIKELIHOOD_SIGMA_PCT</code></td>
+<td>10</td>
+<td>How far a bin may sit from the target</td>
+</tr>
+<tr>
+<td>Sampler</td>
+<td>SMC</td>
+<td>The call that runs. NUTS is in the file, commented out</td>
+</tr>
+<tr>
+<td><code>SAMPLING_DRAWS</code>, <code>SAMPLING_CHAINS</code></td>
+<td>700, 8</td>
+<td>Particles kept per chain, and eight chains</td>
+</tr>
+<tr>
+<td><code>PP_CRED</code></td>
+<td>94</td>
+<td>Width of the band drawn later, in percent</td>
+</tr>
+<tr>
+<td><code>VAL_CE_BATCHES</code>, <code>VAL_CE_PARTICLES</code></td>
+<td>100, 200 000</td>
+<td>The batches and particles for OpenMC at the chosen sizes</td>
+</tr>
+<tr>
+<td><code>WW_PARTICLES</code></td>
+<td>60 000</td>
+<td>Rays that build the weight windows for that tally</td>
+</tr>
+</tbody>
+</table>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>python<span class="w"> </span>src/calibration.py
+</span></code></pre></div>
+<h3 id="surrogate">Surrogate<a class="headerlink" href="#surrogate" title="Permanent link">&para;</a></h3>
+<p>Four inputs: the gap <code>x1</code>, the iron thickness <code>t1</code>, the HDPE thickness <code>t2</code>, and the plate side <code>L</code>. The fit uses 272 of the 350 rows. The other are the hold-out.</p>
+<p>Four target groups are empty, <code>y_171</code> through <code>y_174</code>, so they are skipped. That leaves 171 bins. No row had a negative flux. One bin is noisy: at the 50% cut, <code>y_170</code> keeps 56.9% of its rows, under the 70% warning.</p>
+<p>Two bins were switched to logarithm transform, because the fitted exponent was high and the target sat in the low tail of the training rows: <code>y_00</code> (1.119 → 0) and <code>y_01</code> (1.623 → 0).</p>
+<p><img alt="Validation R² of each energy bin, in the original flux" src="../../assets/gpr_r2_per_bin.png" style="display:block;margin:0 auto;width:100%;max-width:100%" /></p>
+<p>Each bar is one bin, scored on the hold-out rows that passed the 50% cut. Green is 0.95 or better. Orange goes down to 0.80. Red is under 0.80.</p>
+<ul>
+<li>The red bars sit in the middle. There are 29 of them. The shortest is <code>y_107</code>, at 0.4188.</li>
+<li>45 bins are at or above 0.95. 142 are at or above 0.80. The mean is 0.8807.</li>
+<li>No bin fell back to a constant.</li>
+</ul>
+<p>A high score in the transformed space with a low score on this figure means the step back to flux stretched a tail error.</p>
+<p><img alt="Pooled GPR residuals against a standard normal" src="../../assets/gpr_standardized_residuals.png" style="display:block;margin:0 auto;width:40rem;max-width:100%" /></p>
+<p>Each hold-out miss is divided by the uncertainty the process quoted. An honest (ideal) band looks like the orange curve: mean 0, spread 1, and about 95.4% of the misses inside +/-2.</p>
+<ul>
+<li>The mean is +0.012.</li>
+<li>The spread is 1.317. Above 1, so the quoted uncertainty is underestimated.</li>
+<li>90.7% of the misses sit inside +/-2.</li>
+</ul>
+<p><img alt="Sobol indices of the four inputs along the spectrum" src="../../assets/gpr_sobol_indices.png" style="display:block;margin:0 auto;width:100%;max-width:100%" /></p>
+<p>Three panels, same four inputs. Blue is the gap <code>x1</code>. Red is the iron <code>t1</code>. Green is the HDPE <code>t2</code>. Purple is the plate side <code>L</code>.</p>
+<ul>
+<li><strong>Left.</strong> What each input does on its own. Green owns the low energy. Red climbs and owns the fast end. Purple joins from about 10 keV upward. Blue stays on the floor. That is expected. The source gap barely changes the spectrum, so the match does not care where the source sits inside this range.</li>
+<li><strong>Middle.</strong> Fraction of variance explained by each input, including interactions with other inputs. Green sits even closer to 1 at low energy.</li>
+<li><strong>Right.</strong> Difference between the left and middle figure for each parameter. The closer to 0 the more an input acts (almost) independently of other parameters.</li>
+</ul>
+<p>The script also writes <code>gpr_scatter_per_bin.png</code>, one panel per bin, and <code>gpr_spectrum_examples.png</code>, six hold-out spectra. I leave those two out of this page.</p>
+<h3 id="posterior">Posterior<a class="headerlink" href="#posterior" title="Permanent link">&para;</a></h3>
+<p>The sampler is SMC. Eight chains. The log ends at stage 11 with beta equal to 1, which is the posterior itself. <span class="arithmatex">\(\hat{R}\)</span> is 1.0 on every parameter, and the effective sample size is about 5 400 to 5 700.</p>
+<p>The gap does not move the spectrum, so I show the corner plot with <code>x1</code> left off. The script also writes <code>calibration_pair_plot.png</code>, with the gap included. I leave that one out.</p>
+<p><img alt="Corner plot of the iron thickness, the HDPE thickness, and the plate size" src="../../assets/calibration_pair_plot_no_x1.png" style="display:block;margin:0 auto;width:36rem;max-width:100%" /></p>
+<p>Each title is the size to order, then a + and a −. The program tried many sizes and kept the ones whose spectrum stayed within the 10% miss (<code>LIKELIHOOD_SIGMA_PCT</code>). The plot is that pile. The middle number is the typical size in the pile. The +/- is how wide the fat part of the pile is. They come out of the 10%.</p>
+<p>Treat the +/- as the shop aim. Order the middle number. Ask the shop to stay inside the +/-. Inside it, the program kept that size often. A bit outside, it kept that size less often. The spectrum does not flip at the edge, and a size inside the +/- is not a promise that every bin is within 10%.</p>
+<table>
+<thead>
+<tr>
+<th>Size</th>
+<th>Order</th>
+<th>Shop aim</th>
+<th>On the bench</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Iron <code>t1</code></td>
+<td>57.87 cm</td>
+<td>+0.31 cm, −0.32 cm</td>
+<td>About 3 mm on a 58 cm plate</td>
+</tr>
+<tr>
+<td>HDPE <code>t2</code></td>
+<td>1.07 cm</td>
+<td>+0.02 cm, −0.02 cm</td>
+<td>0.2 mm</td>
+</tr>
+<tr>
+<td>Plate side <code>L</code></td>
+<td>79.83 cm</td>
+<td>+1.70 cm, −2.02 cm</td>
+<td>About 2 cm on an 80 cm square</td>
+</tr>
+</tbody>
+</table>
+<p>The gap is missing from the figure on purpose. Its pile runs from 2.080 cm to 3.714 cm. Any source position in that span is fine.</p>
+<p>I keep the draw with the smallest <span class="arithmatex">\(\chi^2\)</span> in the transformed space:</p>
+<p><code>x1</code> = 2.86 cm, <code>t1</code> = 57.78 cm, <code>t2</code> = 1.07 cm, <code>L</code> = 80.50 cm.</p>
+<p><span class="arithmatex">\(\chi^2\)</span> is 719.96. The reduced <span class="arithmatex">\(\chi^2\)</span> is 4.21, over 171 bins. A value near 1 (ideal) would mean the misses line up with the 10% tolerance. The mean log-relative error of the same draw is 22.40%, and that number is only a reading. The choice used the <span class="arithmatex">\(\chi^2\)</span>.</p>
+<p>The script also writes <code>calibration_trace_plot.png</code> and <code>calibration_posterior_correlation.png</code>. I leave them out.</p>
+<div class="admonition tip">
+<p class="admonition-title">NUTS is the other sampler</p>
+<p>SMC is the call that ran. It settles on one geometry, which is the single peak on the corner plot. NUTS is the commented call in the file. Uncomment it when you want the chains to look for more than one design. for more details see <a href="../../scripts/calibration/#sampling">calibration page</a>.</p>
+</div>
+<h3 id="one-openmc-check">One OpenMC check<a class="headerlink" href="#one-openmc-check" title="Permanent link">&para;</a></h3>
+<p>The band below is the surrogate, over every posterior draw and over the surrogate's own uncertainty.</p>
+<p><img alt="Target against the 94% predictive band of the surrogate" src="../../assets/calibration_posterior_predictive.png" style="display:block;margin:0 auto;width:100%;max-width:100%" /></p>
+<p>The green line is the median. The pale band is the central 94%. Dark dots are target bins inside the band. Orange crosses are outside it.</p>
+<p>159 of 171 bins are inside, 93.0%. </p>
+<p><img alt="Share of the predictive variance along the spectrum" src="../../assets/calibration_variance_decomposition.png" style="display:block;margin:0 auto;width:100%;max-width:100%" /></p>
+<p>Orange is the surrogate. Blue is the uncertainty in the four sizes. The orange fill covers the bar (ideal case, it means the sampling converged correctly). The surrogate share averages 99.3%, from 96.1% to 99.9%. The pale green band on the figure above is almost all emulator error.</p>
+<div class="admonition info">
+<p class="admonition-title">More OpenMC runs shrink this band</p>
+<p>The blue piece is already thin. More OpenMC runs (rows) in the CSV would tighten the band. A longer chain would leave it where it is.</p>
+</div>
+<p>The draw I kept is then one OpenMC run, the same two phases as <a href="../../scripts/base_plates/"><code>base_plates.py</code></a>. The plate faces land at 2.86 cm, 60.65 cm, and 61.71 cm. <code>L</code> is 80.50 cm.</p>
+<p>This run writes no geometry figure. The plates are still cast iron, then HDPE.</p>
+<p>Phase 1 writes <code>val_ww/weight_windows.h5</code>.</p>
+<p>Phase 2 writes <code>val_ce/statepoint.100.h5</code>.</p>
+<p>The run also writes <code>neutron_spectrum_log_log.png</code> and <code>neutron_spectrum_real_log_log.png</code>, the same kind of plot as in the validate step, now at these sizes. I leave those two out for brevity.</p>
+<p><img alt="OpenMC, the surrogate, and the target on the full energy grid" src="../../assets/spectrum_comparison_log.png" style="display:block;margin:0 auto;width:44rem;max-width:100%" /></p>
+<p>Three curves. Blue is OpenMC, with its one-standard-deviation band. Green is the emulator: the curve is the median of the predictive band. The pale green band is that 94% band. Red is the target.</p>
+<ul>
+<li>Green sits on blue along the grid. The surrogate and the foward model agree.</li>
+<li>The pale green band covers the red line through most groups. A few groups step outside it, including the first.</li>
+</ul>
+<p><img alt="The fast end, energy on a linear axis" src="../../assets/em_linear_2_15mev.png" style="display:block;margin:0 auto;width:44rem;max-width:100%" /></p>
+<p>Same three curves, from about 2 MeV to 15 MeV.</p>
+<ul>
+<li>Blue and green stay together.</li>
+<li>In the last groups the red target drops, while the blue and green lines stay higher.</li>
+</ul>
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
+<p>The proposed bench experiment uses peak 14.8 MeV source, a gap, a thick cast-iron plate, and a thin HDPE sheet. The detector sits on the far face of the HDPE. The gap can be anywhere from 2.08 cm to 3.71 cm. Order the iron at 57.87 cm, the HDPE at 1.07 cm, and a square plate of 79.83 cm. Hold the HDPE to 0.2 mm. The iron can miss by about 3 mm, and the square by about 2 cm.</p>
+<p>The spectrum follows the vessel target. On the comparison figure the tally, the surrogate, and the target sit together across the grid. 159 of the 171 bins fall inside the 94% band.</p>
+<p>Cast iron and HDPE are ordinary materials. They are decently easy to buy and to machine. This pair is the cheap bend of the front, about 1 USD/cm<span class="arithmatex">\(^2\)</span>. The closest spectrum on that same front was about 6 USD/cm<span class="arithmatex">\(^2\)</span>, for a match that was only a little better.</p>
+<h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a id="ref-1"></a>[1] P. Batistoni et al., <em>Technical preparations for the in-vessel 14 MeV neutron calibration at JET</em>, Fusion Engineering and Design 117 (2017) 107–114. <a href="https://doi.org/10.1016/j.fusengdes.2017.01.023">doi:10.1016/j.fusengdes.2017.01.023</a></li>
+<li><a id="ref-2"></a>[2] R. S. Detwiler, R. J. McConn, T. F. Grimes, S. A. Upton, and E. J. Engel, <em>Compendium of Material Composition Data for Radiation Transport Modeling</em>, PNNL-15870, Rev. 2, Pacific Northwest National Laboratory, April 2021. <a href="https://mcnp.lanl.gov/pdf_files/TechReport_2021_PNNL_PNNL-15870Rev.2_DetwilerMcConnEtAl.pdf">available here</a></li>
+<li><a id="ref-3"></a>[3] U.S. Geological Survey , <em>Mineral Commodity Summaries</em>. <a href="https://www.usgs.gov/centers/national-minerals-information-center/mineral-commodity-summaries">usgs.gov</a></li>
+<li>FISPACT-II reference input spectra, UKAEA. DEMO-HCPB-VV: neutron spectrum in the vacuum vessel of the DEMO helium-cooled pebble-bed concept. <a href="https://fispact.ukaea.uk/wiki/Reference_input_spectra">fispact.ukaea.uk</a></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.path", "navigation.top", "search.highlight", "search.suggest", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

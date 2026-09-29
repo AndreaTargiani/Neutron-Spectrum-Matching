@@ -1,0 +1,2629 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A Monte Carlo driven, surrogate-accelerated framework for neutron spectrum matching via Bayesian Calibration.">
+      
+      
+      
+        <link rel="canonical" href="https://AndreaTargiani.github.io/Neutron-Spectrum-Matching/theory/sn_transfer_operator/">
+      
+      
+        <link rel="prev" href="../../example/demo_vv/">
+      
+      
+        <link rel="next" href="../optimization/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/logo.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>S_N Transfer Operator - Neutron Spectrum Bayesian Matching</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#s_n-transfer-operator" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Neutron Spectrum Bayesian Matching" class="md-header__button md-logo" aria-label="Neutron Spectrum Bayesian Matching" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Neutron Spectrum Bayesian Matching
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              S_N Transfer Operator
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/AndreaTargiani/Neutron-Spectrum-Matching" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Neutron-Spectrum-Matching
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../scripts/config/" class="md-tabs__link">
+          
+  
+  
+  Pipeline
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../example/demo_vv/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Example
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
+          
+  
+  
+  Theory
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Neutron Spectrum Bayesian Matching" class="md-nav__button md-logo" aria-label="Neutron Spectrum Bayesian Matching" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    Neutron Spectrum Bayesian Matching
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/AndreaTargiani/Neutron-Spectrum-Matching" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Neutron-Spectrum-Matching
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipeline
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Pipeline
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configure
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Configure
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/config_materials/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config_materials.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/config_detector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    config_detector.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_1_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_1_4" id="__nav_2_1_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Optional
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_1_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Optional
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/rebin_target_spectrum/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rebin_target_spectrum.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/bin_weights/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    bin_weights.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transfer tensors
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Transfer tensors
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/transfer_matrix/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    transfer_matrix.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Optimize
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Optimize
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/optimizer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    optimizer.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3_2" id="__nav_2_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Optional
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Optional
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/read_opt/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    read_opt.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validate
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Validate
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/base_plates/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    base_plates.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dataset
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Dataset
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/dataset_creation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    dataset_creation.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_2" id="__nav_2_5_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Optional
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Optional
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/analize_dataset/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    analize_dataset.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Calibrate
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Calibrate
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/calibration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    calibration.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7" id="__nav_2_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Utilities
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Utilities
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/utilities/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Optional scripts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/rebin_target_spectrum/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rebin_target_spectrum.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/bin_weights/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    bin_weights.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scripts/read_opt/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    read_opt.py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../example/demo_vv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Example
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Theory
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Theory
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    S_N Transfer Operator
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    S_N Transfer Operator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-core-idea" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The core idea
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#discrete-ordinates-s_n" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Discrete ordinates (S_N)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Discrete ordinates (S_N)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#angular-quadrature-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Angular quadrature details
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-4-d-transfer-tensor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The 4-D transfer tensor
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The 4-D transfer tensor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#current-instead-of-flux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current instead of flux
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estimating-t-with-openmc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estimating T with OpenMC
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Estimating T with OpenMC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quality-gate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quality gate
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#layer-composition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layer composition
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Layer composition">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#applying-t-to-a-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Applying T to a source
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fractional-thicknesses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fractional thicknesses
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fractional thicknesses">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#interpolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interpolation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extrapolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Extrapolation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#source-spectrum-and-the-fine-energy-grid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Source spectrum and the fine energy grid
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Source spectrum and the fine energy grid">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-problem-source-energy-structure-target-energy-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The problem: source energy structure ≠ target energy structure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-fine-generation-grid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The fine generation grid
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#source-spectrum-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Source spectrum modes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gaussian-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gaussian source
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#collapsing-back-to-the-target-grid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Collapsing back to the target grid
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Material Arrangement Optimizer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bayesian_calibration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bayesian Calibration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-core-idea" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The core idea
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#discrete-ordinates-s_n" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Discrete ordinates (S_N)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Discrete ordinates (S_N)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#angular-quadrature-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Angular quadrature details
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-4-d-transfer-tensor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The 4-D transfer tensor
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The 4-D transfer tensor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#current-instead-of-flux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current instead of flux
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estimating-t-with-openmc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estimating T with OpenMC
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Estimating T with OpenMC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quality-gate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quality gate
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#layer-composition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layer composition
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Layer composition">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#applying-t-to-a-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Applying T to a source
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fractional-thicknesses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fractional thicknesses
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fractional thicknesses">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#interpolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interpolation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extrapolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Extrapolation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#source-spectrum-and-the-fine-energy-grid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Source spectrum and the fine energy grid
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Source spectrum and the fine energy grid">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-problem-source-energy-structure-target-energy-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The problem: source energy structure ≠ target energy structure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-fine-generation-grid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The fine generation grid
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#source-spectrum-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Source spectrum modes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gaussian-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gaussian source
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#collapsing-back-to-the-target-grid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Collapsing back to the target grid
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="./" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Theory
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="s_n-transfer-operator">S_N Transfer Operator<a class="headerlink" href="#s_n-transfer-operator" title="Permanent link">&para;</a></h1>
+<h2 id="the-core-idea">The core idea<a class="headerlink" href="#the-core-idea" title="Permanent link">&para;</a></h2>
+<p>Consider a 1D slab shield of thickness <span class="arithmatex">\(d\)</span> made of a single material.<br />
+A <strong>transfer operator</strong> <span class="arithmatex">\(\mathbf{T}\)</span> answers the question:</p>
+<blockquote>
+<p><em>Given a neutron entering the left face with energy <span class="arithmatex">\(E_\text{in}\)</span> and direction <span class="arithmatex">\(\mu_\text{in}\)</span>, what is the transmitted partial current leaving the right face with energy <span class="arithmatex">\(E_\text{out}\)</span> and direction <span class="arithmatex">\(\mu_\text{out}\)</span>?</em></p>
+</blockquote>
+<p>Here <span class="arithmatex">\(\mu = \cos\theta\)</span>, with <span class="arithmatex">\(\theta\)</span> the polar angle from the slab normal (<span class="arithmatex">\(+z\)</span>). Only the <strong>forward hemisphere</strong> <span class="arithmatex">\(\mu \in (0, 1]\)</span> is tracked: <span class="arithmatex">\(\mu = 1\)</span> is normal incidence, <span class="arithmatex">\(\mu \to 0\)</span> is grazing. Backscattered neutrons that leave the entrance face are lost (vacuum boundary) and not tallied because they are assumed to negligible.</p>
+<p>The operator is precomputed once per <em>(material, thickness)</em> and stored in <code>opt_database/</code>. Downstream, stacks of plates are evaluated by composing these operators — no new Monte Carlo during the optimization. See <a href="../../scripts/transfer_matrix/"><code>transfer_matrix.py</code></a> for the knobs; this page is the physics.</p>
+<div class="admonition info">
+<p class="admonition-title">Infinite 1-D slab</p>
+<p><span class="arithmatex">\(\mathbf{T}\)</span> has no transverse leakage. Finite plate size <span class="arithmatex">\(L\)</span> appears only in the later 3-D OpenMC model (<a href="../../scripts/base_plates/"><code>base_plates.py</code></a> / <a href="../../scripts/dataset_creation/"><code>dataset_creation.py</code></a>), not in the tensor.</p>
+</div>
+<hr />
+<h2 id="discrete-ordinates-s_n">Discrete ordinates (S_N)<a class="headerlink" href="#discrete-ordinates-s_n" title="Permanent link">&para;</a></h2>
+<p>Rather than a continuous angular variable, <span class="arithmatex">\(\mu\)</span> is discretised into <span class="arithmatex">\(N_\mu\)</span> <strong>half-range Gauss–Legendre ordinates</strong> on <span class="arithmatex">\((0, 1]\)</span>:</p>
+<div class="arithmatex">\[
+0 &lt; \mu_1 &lt; \mu_2 &lt; \cdots &lt; \mu_{N_\mu} &lt; 1
+\]</div>
+<p>with associated quadrature weights <span class="arithmatex">\(w_k\)</span> that would satisfy <span class="arithmatex">\(\sum_k w_k = 1\)</span>. Energy is grouped into <span class="arithmatex">\(N_E\)</span> bins with edges <span class="arithmatex">\(\{E_0, E_1, \ldots, E_{N_E}\}\)</span>. The generation grid is not always the target grid, see <a href="#source-spectrum-and-the-fine-energy-grid">Source spectrum and the fine energy grid</a>.</p>
+<p><span class="arithmatex">\(N_\mu\)</span> is <code>N_MU</code> in <a href="../../scripts/transfer_matrix/#angular-quadrature"><code>transfer_matrix.py</code></a>. <span class="arithmatex">\(N_\mu\)</span> forward ordinates on the transmission hemisphere are what a full-range <span class="arithmatex">\(S_{2N_\mu}\)</span> set would put in <span class="arithmatex">\(\mu &gt; 0\)</span>.</p>
+<h3 id="angular-quadrature-details">Angular quadrature details<a class="headerlink" href="#angular-quadrature-details" title="Permanent link">&para;</a></h3>
+<p>Half-range Gauss–Legendre: take the standard <span class="arithmatex">\(N_\mu\)</span> nodes <span class="arithmatex">\(s_k\)</span> on <span class="arithmatex">\([-1, 1]\)</span> and remap</p>
+<div class="arithmatex">\[
+\mu_k = \frac{s_k + 1}{2}
+\]</div>
+<p>The matching weights are halved so they still sum to 1, but the generator and the optimizer never use those wieghts. Each column of <span class="arithmatex">\(\mathbf{T}\)</span> is a unit-strength beam at one node; the exit current is tallied in <span class="arithmatex">\(\mu\)</span> bins, not reconstructed with a quadrature sum.</p>
+<p>From the nodes the script builds:</p>
+<table>
+<thead>
+<tr>
+<th>Object</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MU_NODES</code></td>
+<td>Incident beam directions (one OpenMC run per node <span class="arithmatex">\(\times\)</span> energy group)</td>
+</tr>
+<tr>
+<td><code>MU_EDGES</code></td>
+<td><span class="arithmatex">\(N_\mu+1\)</span> edges for <code>openmc.MuSurfaceFilter</code>: <span class="arithmatex">\(0\)</span>, midpoints between consecutive nodes, <span class="arithmatex">\(1\)</span> — so each tally bin contains exactly one ordinate</td>
+</tr>
+</tbody>
+</table>
+<p>The default is <span class="arithmatex">\(N_\mu = 5\)</span>. Tally bins below are those <code>MU_EDGES</code> intervals:</p>
+<table>
+<thead>
+<tr>
+<th><span class="arithmatex">\(k\)</span></th>
+<th><span class="arithmatex">\(\mu_k\)</span></th>
+<th><span class="arithmatex">\(w_k\)</span></th>
+<th>Tally bin <span class="arithmatex">\([\theta_\text{min}, \theta_\text{max}]\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0.0469</td>
+<td>0.1185</td>
+<td><span class="arithmatex">\([82.0°, 90°]\)</span></td>
+</tr>
+<tr>
+<td>1</td>
+<td>0.2308</td>
+<td>0.2393</td>
+<td><span class="arithmatex">\([68.6°, 82.0°]\)</span></td>
+</tr>
+<tr>
+<td>2</td>
+<td>0.5000</td>
+<td>0.2844</td>
+<td><span class="arithmatex">\([50.6°, 68.6°]\)</span></td>
+</tr>
+<tr>
+<td>3</td>
+<td>0.7692</td>
+<td>0.2393</td>
+<td><span class="arithmatex">\([30.6°, 50.6°]\)</span></td>
+</tr>
+<tr>
+<td>4</td>
+<td>0.9531</td>
+<td>0.1185</td>
+<td><span class="arithmatex">\([0°, 30.6°]\)</span> — near-normal</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition danger">
+<p class="admonition-title">Changing <code>N_MU</code></p>
+<p>Nodes, edges, and the tensor shape all change. Delete <code>opt_database/sn_tensor_*.npy</code> and regenerate. I personally suggest leaving <code>N_MU</code> at 5 unless the extra <span class="arithmatex">\(N_\mu \times N_E\)</span> columns are clearly worth it.</p>
+</div>
+<hr />
+<h2 id="the-4-d-transfer-tensor">The 4-D transfer tensor<a class="headerlink" href="#the-4-d-transfer-tensor" title="Permanent link">&para;</a></h2>
+<p>The <span class="arithmatex">\(S_N\)</span> transfer tensor is the 4-D array</p>
+<div class="arithmatex">\[
+\mathbf{T}[\mu_\text{out},\, E_\text{out},\, \mu_\text{in},\, E_\text{in}]
+\quad \text{shape: } N_\mu \times N_E \times N_\mu \times N_E
+\]</div>
+<p>Entry <span class="arithmatex">\((\mu_\text{out}, E_\text{out}, \mu_\text{in}, E_\text{in})\)</span> is the transmitted partial current through the exit surface for a <strong>unit-strength</strong> monodirectional beam that enters at ordinate <span class="arithmatex">\(\mu_\text{in}\)</span> with energy drawn uniformly in group <span class="arithmatex">\(E_\text{in}\)</span>.</p>
+<p>To send a neutron state through a layer we need an ordinary matrix–vector product, so the 4-D tensor is reshaped into a square matrix of size <span class="arithmatex">\(N_\text{state} = N_\mu \times N_E\)</span>. The neutron state is a 1-D vector of the same length, laid out one angular bin after another, and inside each angle the energy groups in order:</p>
+<div class="arithmatex">\[
+\mathbf{m}
+=
+\bigl[
+\underbrace{m(\mu_0,E_0),\ldots,m(\mu_0,E_{N_E-1})}_{\text{angle }0},\;
+\underbrace{m(\mu_1,E_0),\ldots,m(\mu_1,E_{N_E-1})}_{\text{angle }1},\;
+\ldots
+\bigr]
+\]</div>
+<p>The matrix <span class="arithmatex">\(\mathbf{T}_\text{2D}\)</span> uses that same packing: each row is one outgoing <span class="arithmatex">\((\mu, E)\)</span> pair, each column one incoming pair. Then <span class="arithmatex">\(\mathbf{m}_\text{out} = \mathbf{T}_\text{2D}\,\mathbf{m}_\text{in}\)</span>.</p>
+<h3 id="current-instead-of-flux">Current instead of flux<a class="headerlink" href="#current-instead-of-flux" title="Permanent link">&para;</a></h3>
+<p>Current per incident particle is always <span class="arithmatex">\(\leq 1\)</span> in a purely absorbing/scattering slab, whereas a track-length flux tally can exceed 1 and would not be a transmission coefficient. Current also counts only neutrons that leave the material, so a neutron that backscatters and re-enters is not double-counted as transmitted.</p>
+<p>Key properties:</p>
+<p>Summing a column over <span class="arithmatex">\((\mu_\text{out}, E_\text{out})\)</span> is the total forward transmission for that incident beam, <span class="arithmatex">\(\leq 1\)</span> unless multiplication (e.g. <span class="arithmatex">\((n,2n)\)</span>) dominates.</p>
+<hr />
+<h2 id="estimating-t-with-openmc">Estimating T with OpenMC<a class="headerlink" href="#estimating-t-with-openmc" title="Permanent link">&para;</a></h2>
+<p>Each column is one fixed-source run.</p>
+<p><strong>Geometry.</strong> Slab <span class="arithmatex">\(0 \le z \le d\)</span>, vacuum at <span class="arithmatex">\(z = 0\)</span>, transmission at the exit face <span class="arithmatex">\(z = d\)</span>, then a 1 cm void with vacuum at <span class="arithmatex">\(z = d+1\)</span>. The current is scored on the material–void interface.</p>
+<p><strong>Source.</strong> A point at the origin, direction <span class="arithmatex">\((\sqrt{1-\mu^2},\, 0,\, \mu)\)</span> at <code>MU_NODES[μ_in]</code>, energy <code>Uniform</code> on the incident fine group, strength 1.</p>
+<p><strong>Tally.</strong> Neutron current on the exit face <span class="arithmatex">\(z = d\)</span>, binned in outgoing <span class="arithmatex">\(\mu\)</span> (<code>MU_EDGES</code>) and outgoing energy (<code>ENERGY_EDGES</code>).</p>
+<p><img alt="Slab geometry for one transfer-tensor column" src="../../assets/sn_slab_geometry.svg" /></p>
+<h3 id="quality-gate">Quality gate<a class="headerlink" href="#quality-gate" title="Permanent link">&para;</a></h3>
+<p>The raw tally is not written as-is. For each exit bin the gate looks at the Monte Carlo relative error <span class="arithmatex">\(\sigma/\text{mean}\)</span> against <code>SN_REL_ERR</code>, and at the mean against a noise floor <code>SN_THRESHOLD</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Mean</th>
+<th>Rel. error OK?</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>any</td>
+<td>yes</td>
+<td><strong>Keep</strong> — including values below the noise floor. A well-resolved small current is signal.</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(\ge\)</span> <code>SN_THRESHOLD</code></td>
+<td>no</td>
+<td><strong>Fail the run</strong> — double the particle count and rerun, up to <code>SN_PARTICLES_MAX</code>.</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(&lt;\)</span> <code>SN_THRESHOLD</code></td>
+<td>no</td>
+<td><strong>Zero that bin</strong>. This never triggers a rerun.</td>
+</tr>
+</tbody>
+</table>
+<p>If the particle cap is hit with a still-noisy large bin, the cleaned column is accepted anyway so the grid cannot stall forever.</p>
+<div class="admonition info">
+<p class="admonition-title">Why a floor at all</p>
+<p>Tiny, poorly sampled tails would otherwise force every column up to the particle cap. The floor is a speed/accuracy trade, not a claim that sub-threshold physics is zero. Knobs live on the <a href="../../scripts/transfer_matrix/#quality-gate-per-incident-column">script page</a>.</p>
+</div>
+<p>Two files are written per pair:</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sn_tensor_{mat}_{t}cm.npy</code></td>
+<td>Gate-cleaned mean of the tensor</td>
+</tr>
+<tr>
+<td><code>sn_tensor_{mat}_{t}cm_std.npy</code></td>
+<td>Monte Carlo standard deviation of the last run</td>
+</tr>
+</tbody>
+</table>
+<p>The optimizer loads only the mean.</p>
+<hr />
+<h2 id="layer-composition">Layer composition<a class="headerlink" href="#layer-composition" title="Permanent link">&para;</a></h2>
+<p>The reason for storing a full-rank <span class="arithmatex">\(S_N\)</span> tensor is that multi-layer shields compose by matrix multiplication.</p>
+<p>For an <span class="arithmatex">\(N\)</span>-layer stack, with <span class="arithmatex">\(\mathbf{T}^{(i)}\)</span> the flattened operator of layer <span class="arithmatex">\(i\)</span>:</p>
+<div class="arithmatex">\[
+\mathbf{T}^\text{total} = \mathbf{T}^{(N)} \cdots \mathbf{T}^{(2)} \cdot \mathbf{T}^{(1)}
+\]</div>
+<p>Equivalently, the angle-resolved state <span class="arithmatex">\(\mathbf{m} \in \mathbb{R}^{N_\text{state}}\)</span> is updated as <span class="arithmatex">\(\mathbf{m}_{k+1} = \mathbf{T}^{(k)}_\text{2D}\,\mathbf{m}_k\)</span>. That product replaces a full Monte Carlo run at every optimizer evaluation.</p>
+<h3 id="applying-t-to-a-source">Applying T to a source<a class="headerlink" href="#applying-t-to-a-source" title="Permanent link">&para;</a></h3>
+<p>The tensor itself does not contain the source intensities. At evaluation time (<a href="../../scripts/optimizer/"><code>optimizer.py</code></a>):</p>
+<ol>
+<li>The source histogram from <a href="../../scripts/config/"><code>config.py</code></a> is overlap-rebinned onto the fine grid and normalised to a shape <span class="arithmatex">\(\hat{\phi}^\text{source}\)</span> (sum 1).</li>
+<li>That shape is embedded as a <strong>near-normal pencil</strong>: all energy groups sit in the last ordinate (<code>SOURCE_MU_INDEX = N_MU - 1</code>). Other <span class="arithmatex">\(\mu\)</span> channels start at 0.</li>
+<li>After the stack, the detector spectrum on the fine grid is the <span class="arithmatex">\(\mu\)</span>-sum <span class="arithmatex">\( \phi_E = \sum_\mu m[\mu, E] \)</span>, then collapsed to the target grid (<a href="#collapsing-back-to-the-target-grid">below</a>).</li>
+</ol>
+<hr />
+<h2 id="fractional-thicknesses">Fractional thicknesses<a class="headerlink" href="#fractional-thicknesses" title="Permanent link">&para;</a></h2>
+<p>The generator stores <span class="arithmatex">\(\mathbf{T}\)</span> only on a discrete thickness grid (<code>THICKNESSES</code>). Interpolation and extrapolation are done later by the optimizer, on demand.</p>
+<h3 id="interpolation">Interpolation<a class="headerlink" href="#interpolation" title="Permanent link">&para;</a></h3>
+<p>For a requested thickness <span class="arithmatex">\(d\)</span> between two database points <span class="arithmatex">\(d_1 &lt; d &lt; d_2\)</span>:</p>
+<div class="arithmatex">\[
+T_{ij}(d) \approx \exp\!\left[(1-\alpha)\ln( \max(T_{ij}(d_1),\varepsilon)) + \alpha\ln( \max(T_{ij}(d_2),\varepsilon)\right)],
+\quad
+\alpha = \frac{d - d_1}{d_2 - d_1} \in (0,1)
+\]</div>
+<p>with <span class="arithmatex">\(\varepsilon = 10^{-30}\)</span> inside the logarithm so <span class="arithmatex">\(\ln 0\)</span> is avoided.</p>
+<p>This is a geometric blend of the two bracketing tensors, motivated by Beer–Lambert: attenuation is exponential in thickness, so linear interpolation in log-space is the natural model.</p>
+<h3 id="extrapolation">Extrapolation<a class="headerlink" href="#extrapolation" title="Permanent link">&para;</a></h3>
+<p>Outside the grid, the nearest boundary operator is raised to a fractional power,</p>
+<div class="arithmatex">\[
+\mathbf{T}(d) \approx \mathbf{T}(d_\text{bound})^{d / d_\text{bound}}
+\]</div>
+<p>via eigendecomposition with clamping of dead or unphysical eigenvalues. This should be avoided where possible, transfer tensors are not guaranteed to be positive definite. See <a href="../optimization/#evaluating-a-stack">Evaluating a stack</a> for why the search bounds should stay inside the database range.</p>
+<hr />
+<h2 id="source-spectrum-and-the-fine-energy-grid">Source spectrum and the fine energy grid<a class="headerlink" href="#source-spectrum-and-the-fine-energy-grid" title="Permanent link">&para;</a></h2>
+<h3 id="the-problem-source-energy-structure-target-energy-structure">The problem: source energy structure ≠ target energy structure<a class="headerlink" href="#the-problem-source-energy-structure-target-energy-structure" title="Permanent link">&para;</a></h3>
+<p>The target spectrum lives on a user-specified group grid (<code>TARGET_ENERGY_EDGES</code>).</p>
+<p>To resolve the source without rewriting the target grid, the generator builds a fine grid that is the union of the two structures.</p>
+<h3 id="the-fine-generation-grid">The fine generation grid<a class="headerlink" href="#the-fine-generation-grid" title="Permanent link">&para;</a></h3>
+<p>Given <code>TARGET_ENERGY_EDGES</code> (<span class="arithmatex">\(N_\text{target}\)</span> groups) and the source histogram edges from <a href="../../scripts/config/"><code>config.py</code></a>:</p>
+<div class="arithmatex">\[
+\mathcal{E}_\text{fine} = \mathcal{E}_\text{target} \cup \mathcal{E}_\text{source}.
+\]</div>
+<p>Only source edges that fall strictly inside the target range and do not already coincide with a target edge are added. Edges outside the simulated range are dropped. The result is the target grid with extra splits only where the source needs them.</p>
+<p>The OpenMC tallies and the stored tensor both use this fine grid:</p>
+<div class="arithmatex">\[
+\mathbf{T}_\text{fine}[\mu_\text{out},\, E_\text{out},\, \mu_\text{in},\, E_\text{in}]
+\quad \text{shape: } N_\mu \times N_{E,\text{fine}} \times N_\mu \times N_{E,\text{fine}}
+\]</div>
+<h3 id="source-spectrum-modes">Source spectrum modes<a class="headerlink" href="#source-spectrum-modes" title="Permanent link">&para;</a></h3>
+<p>Two kinds are available via <code>SOURCE_KIND</code> in <a href="../../scripts/config/#source-spectrum"><code>config.py</code></a>. Both produce a histogram <code>(SOURCE_EDGES, SOURCE_VALUES)</code> of bin-integrated content.</p>
+<table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"gaussian"</code></td>
+<td>Peak discretised onto its own <code>n_bins</code> histogram (exact erf mass).</td>
+</tr>
+<tr>
+<td><code>"edges"</code></td>
+<td>User supplied piecewise-constant spectrum on an arbitrary grid.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="gaussian-source">Gaussian source<a class="headerlink" href="#gaussian-source" title="Permanent link">&para;</a></h3>
+<p>For <code>SOURCE_KIND = "gaussian"</code>, the Gaussian is not integrated bin-by-bin on the fine grid. It is discretised first onto <code>n_bins</code> equal-width bins covering <span class="arithmatex">\(\mu_0 \pm n_\sigma\sigma\)</span> (clipped at <span class="arithmatex">\(E = 0\)</span>):</p>
+<div class="arithmatex">\[
+c_k = \frac{1}{2}\!\left[
+  \operatorname{erf}\!\left(\frac{e_{k+1} - \mu_0}{\sqrt{2}\,\sigma}\right) -
+  \operatorname{erf}\!\left(\frac{e_k - \mu_0}{\sqrt{2}\,\sigma}\right)
+\right].
+\]</div>
+<p>Those <span class="arithmatex">\((e_k, c_k)\)</span> become <code>SOURCE_EDGES</code> / <code>SOURCE_VALUES</code>. Their edges refine the target grid as above. At evaluation time the histogram is overlap-rebinned onto <span class="arithmatex">\(\mathcal{E}_\text{fine}\)</span> (piecewise-constant density inside each source bin) and normalised.</p>
+<p><span class="arithmatex">\(\sum_k c_k\)</span> equals the probability mass inside the truncation window, not necessarily 1 if the Gaussian is cut at <span class="arithmatex">\(E = 0\)</span>.</p>
+<h3 id="collapsing-back-to-the-target-grid">Collapsing back to the target grid<a class="headerlink" href="#collapsing-back-to-the-target-grid" title="Permanent link">&para;</a></h3>
+<p>After transport, the fine-grid output is collapsed to the target grid before comparison with the target spectrum. The collapse matrix <span class="arithmatex">\(\mathbf{C} \in \{0,1\}^{N_\text{target} \times N_{E,\text{fine}}}\)</span> assigns each fine bin to the unique target bin whose edges contain its midpoint:</p>
+<div class="arithmatex">\[
+\phi^\text{target}_i
+=
+\sum_{\substack{k:\,\mathrm{mid}(e^\text{fine}_k) \in [E_i, E_{i+1}]}}
+\sum_{\mu}
+m[\mu, k]
+=
+\bigl(\mathbf{C}\,\phi^\text{fine}\bigr)_i
+\]</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.path", "navigation.top", "search.highlight", "search.suggest", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
