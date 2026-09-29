@@ -147,9 +147,10 @@ def plot_survival(bin_indices, counts, n_samples, thresholds, cal_limit, as_frac
             label=f"calibration.py ({t:.0%})" if from_cal else f"{t:.0%}",
         )
 
-    ax.set_xlabel("Bin index")
-    ax.set_ylabel("Surviving sample fraction" if as_fraction else "Surviving sample count")
-    ax.set_title("Bin-by-bin sample survival vs. relative uncertainty cut")
+    ax.set_xlabel("Bin index", fontsize=15)
+    ax.set_ylabel("Surviving sample fraction" if as_fraction else "Surviving sample count", fontsize=15)
+    ax.set_title("Bin-by-bin sample survival vs. relative uncertainty cut", fontsize=17)
+    ax.tick_params(axis="both", which="both", labelsize=15)
     ax.set_ylim(0, 1.05 if as_fraction else n_samples * 1.05)
     ax.axhline(
         1.0 if as_fraction else n_samples,
@@ -159,7 +160,7 @@ def plot_survival(bin_indices, counts, n_samples, thresholds, cal_limit, as_frac
         label=f"total samples (n={n_samples})",
     )
     ax.grid(True, alpha=0.3)
-    ax.legend(loc="best", fontsize=9)
+    ax.legend(loc="best", fontsize=14)
     fig.tight_layout()
     fig.savefig(out_path, dpi=150)
     plt.close(fig)
