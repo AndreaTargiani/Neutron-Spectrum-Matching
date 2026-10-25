@@ -660,18 +660,45 @@ def _spectrum_from_statepoint(sp_filename: str):
     return sp, tally, mean, std
 
 
+def normalized_flux_sigma(mean: np.ndarray, std: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """Integral-normalised flux and its absolute Monte Carlo uncertainty.
+
+    Normalisation is over every entry of ``mean``. Bins are treated as
+    independent, so a bin that is part of the total does not keep the whole
+    raw-count error: that part cancels when the count is turned into a
+    percentage.
+    """
+    mean = np.asarray(mean, dtype=float).reshape(-1)
+    std = np.asarray(std, dtype=float).reshape(-1)
+    if mean.shape != std.shape:
+        raise ValueError(f"mean shape {mean.shape} != std shape {std.shape}")
+    total = float(np.sum(mean))
+    if not np.isfinite(total) or total <= 0.0:
+        total = 1.0
+    phi = mean / total
+    positive = mean > 0.0
+    raw_sigma = np.zeros_like(phi)
+    raw_sigma[positive] = std[positive] / total
+    rel = np.zeros_like(phi)
+    rel[positive] = std[positive] / mean[positive]
+    others = float(np.sum(raw_sigma**2)) - raw_sigma**2
+    rel_sq = rel**2 * (1.0 - phi) ** 2 + np.maximum(others, 0.0)
+    sigma = np.zeros_like(phi)
+    sigma[positive] = phi[positive] * np.sqrt(np.maximum(rel_sq[positive], 0.0))
+    return phi, sigma
+
+
 def extract_flux(sp_filename: str) -> tuple[np.ndarray, np.ndarray]:
     """Integral-normalized flux and relative uncertainty [%] from a statepoint.
 
-    Normalization is over the *whole* grid. dataset_creation.py and
-    calibration.py rely on that; the __main__ printout renormalizes over
-    non-zero-target bins afterwards.
+    Normalization is over the *whole* grid. The percentage uncertainty is the
+    uncertainty of that normalised flux, from ``normalized_flux_sigma``.
     """
     _, _, mean, std = _spectrum_from_statepoint(sp_filename)
-    norm = mean / (mean.sum() or 1.0)
+    phi, sigma = normalized_flux_sigma(mean, std)
     with np.errstate(divide='ignore', invalid='ignore'):
-        rel_unc = np.where(mean > 0, std / mean * 100.0, 0.0)
-    return norm, rel_unc
+        rel_unc = np.where(phi > 0.0, sigma / phi * 100.0, 0.0)
+    return phi, rel_unc
 
 
 def log_rmse(flux: np.ndarray, target: np.ndarray) -> float:
@@ -727,14 +754,11 @@ def postprocess_statepoint(sp_filename: str, target_values: list[float]) -> None
     )
     active = active_target_mask(target, mean.size)
 
-    ref = float(np.nansum(mean[active]))
-    if not np.isfinite(ref) or ref <= 0.0:
-        ref = 1.0
-    with np.errstate(divide='ignore', invalid='ignore'):
-        norm = _active_view(mean / ref, active)
-        rel_unc = np.where(mean > 0, std / mean, 0.0)
-        sum_unc = np.sqrt(np.nansum(std[active] ** 2)) / ref
-        norm_std = norm * np.sqrt(rel_unc ** 2 + sum_unc ** 2)
+    phi_active, sigma_active = normalized_flux_sigma(mean[active], std[active])
+    norm = np.full(mean.shape, np.nan)
+    norm_std = np.full(mean.shape, np.nan)
+    norm[active] = phi_active
+    norm_std[active] = sigma_active
     band = (np.maximum(norm - norm_std, 0.0), norm + norm_std)
     t_norm = _active_view(target / (target[active].sum() or 1.0), active)
     xlim = _active_xlim(edges, active)
@@ -1108,15 +1132,16 @@ def plot_weight_windows_bounds(
             e_label = f'Bin {bin_i} [{e_lo:.3g}, {e_hi:.3g}] eV'
 
             fig, axs = plt.subplots(2, 2, figsize=(15, 12), layout='constrained')
+            fig.suptitle(e_label, fontsize=17)
             panels = [
                 (axs[0, 0], lb_xz, X_xz, Z_xz, 'xz', x_lim, z_lim, 'Z [cm]',
-                 f'Lower Bound (XZ, y~{y_cut:.1f} cm), {e_label}'),
+                 f'Lower Bound (XZ, y~{y_cut:.1f} cm)'),
                 (axs[0, 1], lb_xy, X_xy, Y_xy, 'xy', x_lim, y_lim, 'Y [cm]',
-                 f'Lower Bound (XY, z~{z_cut:.1f} cm), {e_label}'),
+                 f'Lower Bound (XY, z~{z_cut:.1f} cm)'),
                 (axs[1, 0], ub_xz, X_xz, Z_xz, 'xz', x_lim, z_lim, 'Z [cm]',
-                 f'Upper Bound (XZ, y~{z_cut:.1f} cm), {e_label}'),
+                 f'Upper Bound (XZ, y~{z_cut:.1f} cm)'),
                 (axs[1, 1], ub_xy, X_xy, Y_xy, 'xy', x_lim, y_lim, 'Y [cm]',
-                 f'Upper Bound (XY, z~{z_cut:.1f} cm), {e_label}'),
+                 f'Upper Bound (XY, z~{z_cut:.1f} cm)'),
             ]
             im0 = None
             for ax, data, X, Y, plane, xlim, ylim, ylabel, title in panels:
@@ -1124,8 +1149,8 @@ def plot_weight_windows_bounds(
                 if im0 is None:
                     im0 = im
                 ax.set_title(title, fontsize=17)
-                ax.set_xlabel('X [cm]', fontsize=15)
-                ax.set_ylabel(ylabel, fontsize=15)
+                ax.set_xlabel('X [cm]', fontsize=20)
+                ax.set_ylabel(ylabel, fontsize=20)
                 ax.tick_params(axis='both', which='both', labelsize=15)
                 ax.set_xlim(xlim)
                 ax.set_ylim(ylim)
@@ -1133,8 +1158,8 @@ def plot_weight_windows_bounds(
                 _annotate(ax, plane)
 
             cbar = fig.colorbar(im0, ax=axs)
-            cbar.set_label('WW Bound', fontsize=15)
-            cbar.ax.tick_params(labelsize=15)
+            cbar.set_label('WW Bound', fontsize=20)
+            cbar.ax.tick_params(labelsize=20)
             fig.savefig(os.path.join(out_dir, f'ww_bounds_bin_{bin_i}.png'), dpi=150)
             plt.close(fig)
     except Exception as err:
@@ -1314,12 +1339,17 @@ if __name__ == '__main__':
         plate_half_z=half,
     )
 
-    # extract_flux normalizes over the whole grid (dataset_creation.py /
-    # calibration.py rely on that); renormalize here over non-zero-target bins.
-    flux_norm, rel_unc = extract_flux(sp_file)
+    # Print the spectrum the way the objective sees it: non-zero-target bins
+    # only, with the uncertainty of that normalisation.
+    _, _, mean, std = _spectrum_from_statepoint(sp_file)
     target = convert_if_lethargy(TARGET_VALUES, ENERGY_EDGES, PHI_TARGET_IN_LETHARGY)
-    active = active_target_mask(target, flux_norm.size)
-    flux_norm = flux_norm / (flux_norm[active].sum() or 1.0)
+    active = active_target_mask(target, mean.size)
+    phi_active, sigma_active = normalized_flux_sigma(mean[active], std[active])
+    flux_norm = np.zeros(mean.shape, dtype=float)
+    rel_unc = np.zeros(mean.shape, dtype=float)
+    flux_norm[active] = phi_active
+    positive = phi_active > 0.0
+    rel_unc[np.flatnonzero(active)[positive]] = sigma_active[positive] / phi_active[positive] * 100.0
 
     n_skipped = int((~active).sum())
     if n_skipped:

@@ -198,7 +198,28 @@ The next `--refine` skips 8 and starts at index 8. Indices 8 and 9 are already i
 | Run settings | `use_angle_bias`, `ce_particles`, `ce_batches` | Settings used for this row |
 | Wall times | `wall_time_ww_s`, `wall_time_ce_s`, `wall_time_s` | Phase 1, Phase 2, and total (s) |
 | Flux | `y_00`, `y_01`, ... | Integral-normalised flux, one column per target bin |
-| Uncertainty | `sigma_00`, `sigma_01`, ... | Absolute \(1\sigma\) on that normalised flux |
+| Uncertainty | `sigma_00`, `sigma_01`, ... | Absolute \(1\sigma\) of that normalised flux. See below |
+
+OpenMC reports a raw tally \(\mu_i\) in each energy bin and the Monte Carlo uncertainty \(\sigma_i\) on that tally. `extract_flux` stores the share of the total, not the raw tally. With \(S = \sum_j \mu_j\),
+
+\[
+\phi_i = \frac{\mu_i}{S}, \qquad r_i = \frac{\sigma_i}{\mu_i}
+\]
+
+`y_ii` is \(\phi_i\). `sigma_ii` is the uncertainty of that share. The bins are treated as independent:
+
+\[
+\sigma_{\phi,i}
+=
+\phi_i
+\sqrt{
+  r_i^{2}\,(1-\phi_i)^{2}
+  +
+  \sum_{j\neq i}\left(\frac{\sigma_j}{S}\right)^{2}
+}
+\]
+
+A bin that holds a large share of the counts moves \(S\) with it, so part of \(\sigma_i\) cancels in the ratio and \(\sigma_{\phi,i}\) is smaller than \(\phi_i r_i\). A weak bin barely moves the total, and the two are close.
 
 ---
 

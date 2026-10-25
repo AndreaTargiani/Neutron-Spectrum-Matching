@@ -1,4 +1,4 @@
-# Example — DEMO vacuum vessel
+# Example — DEMO HCPB vacuum vessel
 
 ## What this page is
 
@@ -398,7 +398,7 @@ The script also writes `calibration_trace_plot.png` and `calibration_posterior_c
 !!! tip "NUTS is the other sampler"
     SMC is the call that ran. It settles on one geometry, which is the single peak on the corner plot. NUTS is the commented call in the file. Uncomment it when you want the chains to look for more than one design. for more details see [calibration page](../scripts/calibration.md#sampling).
 
-### One OpenMC check
+### OpenMC MAP check
 
 The band below is the surrogate, over every posterior draw and over the surrogate's own uncertainty.
 

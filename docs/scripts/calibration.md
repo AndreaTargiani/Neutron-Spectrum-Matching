@@ -51,7 +51,7 @@ Path to the Sobol CSV. A relative path is resolved from the directory you launch
 | `RAW_INPUT_COLS` | `x1`, `x2`, ... | Cumulative plate boundaries, as stored |
 | `INPUT_COLS` | `x1`, `t1`, `t2`, ..., `L` | Independent inputs of the GPR and of the sampler |
 | `BIN_COLS` | `y_00`, `y_01`, ... with a non-zero target | One GPR per active bin |
-| `SIGMA_COLS` | `sigma_00`, `sigma_01`, ... | Absolute Monte Carlo \(1\sigma\) on the normalised flux |
+| `SIGMA_COLS` | `sigma_00`, `sigma_01`, ... | Absolute Monte Carlo \(1\sigma\) of the normalised flux. How it is built from the raw tally is in the [dataset CSV](dataset_creation.md#output-csv) |
 
 
 Cumulative boundaries are converted before any fit:

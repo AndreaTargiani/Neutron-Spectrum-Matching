@@ -154,7 +154,7 @@ The default coefficient \(h(E)\) is ambient dose equivalent H\*(10) from [ICRP P
 
 === "ICRP"
 
-    \(w_i \propto \phi_i \cdot h_i\), the dose rate the target deposits in bin \(i\). \(h\) is the fluence-to-dose coefficient set in [`bin_weights.py`](bin_weights.md). The default is H\*(10).
+    \(w_i \propto \phi_i \cdot h_i\), the dose rate the target deposits in bin \(i\). \(h\) is the fluence-to-dose coefficient set in [`bin_weights.py`](bin_weights.md), there a user can choose between ICRP-74, ICRP-116, ambient or effective dose. The default is ambient dose ICRP-74 H\*(10).
 
 === "response"
 

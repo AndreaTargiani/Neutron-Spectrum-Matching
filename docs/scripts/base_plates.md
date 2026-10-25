@@ -11,7 +11,7 @@ It also owns the two-phase FW-CADIS local variance reduction (developed by Jack 
 Phase 1 builds weight windows from a **local adjoint source in the detector**, not from a forward-weighted \(1/\phi\) target tally. Group strengths follow [`WEIGHT_MODE`](config.md#per-bin-weighting) in `config.py`. Phase 2 is the continuous-energy production run that tallies the spectrum.
 
 !!! info "Forward model compatibility"
-    Any forward model that writes a multigroup flux tally compatible with `dataset_creation.py` and `calibration.py` can replace this geometry. Swap plates, materials, detector, energy grid, or the variance-reduction scheme (or drop it) without touching the rest of the pipeline, as long as `extract_flux` still returns an integral-normalised spectrum on `TARGET_ENERGY_EDGES`.
+    Any forward model that writes a multigroup flux tally compatible with `dataset_creation.py` and `calibration.py` can replace this geometry. Swap plates, materials, detector, energy grid, or the variance-reduction scheme (or drop it) without touching the rest of the pipeline, as long as `extract_flux` still returns an integral-normalised spectrum on `TARGET_ENERGY_EDGES` and the uncertainty of that normalised flux.
 
 ---
 
@@ -207,7 +207,7 @@ For background on weight windows in OpenMC, see the [variance reduction user gui
 | `neutron_spectrum_real_log_log.png` | Same comparison in n/cm²/s (`SOURCE_STRENGTH` / active volume) |
 | `ww_generation/ww_bounds_bin_N.png` | WW lower/upper bounds for each requested `PLOT_WW_BIN`, can be a list |
 
-The terminal also prints a table of kept bins (`flux_norm`, `rel_unc_%`) and one line, `Log-RMSE = ...`. That number is the same detector-weighted \(\mathcal{L}\) as in the [optimizer](../theory/optimization.md#spectral-error): both spectra are integral-normalised over the full grid, the log floor is [`LOG_EPS`](config.md#helpers), weights come from `WEIGHT_MODE`, and zero-target bins are dropped. The MAP OpenMC check in [`calibration.py`](calibration.md) calls `postprocess_statepoint`, so that run prints the same line.
+The terminal also prints a table of kept bins (`flux_norm`, `rel_unc_%`) and one line, `Log-RMSE = ...`. `flux_norm` in that table, and the pale band on `neutron_spectrum_log_log.png`, are normalised over the non-zero-target bins only. `rel_unc_%` is \(100\,\sigma_{\phi,i}/\phi_i\) for that same normalisation, the uncertainty of the share rather than of the raw tally. The CSV from [`dataset_creation.py`](dataset_creation.md#output-csv) instead normalises over the whole grid. The log-RMSE is the same detector-weighted \(\mathcal{L}\) as in the [optimizer](../theory/optimization.md#spectral-error): both spectra are integral-normalised over the full grid, the log floor is [`LOG_EPS`](config.md#helpers), weights come from `WEIGHT_MODE`, and zero-target bins are dropped. The MAP OpenMC check in [`calibration.py`](calibration.md) calls `postprocess_statepoint`, so that run prints the same line.
 
 ---
 
