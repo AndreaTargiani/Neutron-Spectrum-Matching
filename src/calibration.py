@@ -17,7 +17,7 @@ import pymc as pm
 import pytensor.tensor as pt
 from scipy.stats import boxcox as scipy_boxcox
 from scipy.stats import yeojohnson as scipy_yeojohnson
-from scipy.stats import norm, qmc
+from scipy.stats import norm, qmc, skew as scipy_skew
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 
@@ -47,11 +47,12 @@ CSV_PATH = "examples/demo_hcpb_vv.csv"
 VAL_FRACTION = 0.20
 RANDOM_SEED = 12
 
-Y_TRANSFORM = "boxcox"       # "boxcox" | "yeojohnson" | "log_eps"
+Y_TRANSFORM = "best"         # "boxcox" | "yeojohnson" | "log_eps" | "best" | per-bin list
 LOG_FLOOR = 1e-30
-# Box-Cox only: force λ=0 (log) on a bin whose fitted λ is above LOG_OVERRIDE_LAMBDA
-# and whose target lies below the LOG_OVERRIDE_TARGET_Q quantile of its training values.
-LOG_OVERRIDE_LAMBDA = 0.5
+# Box-Cox and Yeo-Johnson: force λ=0 (log) on a bin whose fitted λ is above
+# LOG_OVERRIDE_LAMBDA and whose target lies below the LOG_OVERRIDE_TARGET_Q
+# quantile of its training values.
+LOG_OVERRIDE_LAMBDA = 0.6
 LOG_OVERRIDE_TARGET_Q = 0.10
 
 MATERN_NU = 0.5              # 0.5 | 1.5 | 2.5
@@ -85,7 +86,7 @@ PP_CRED = 94
 
 VAL_WW_DIR = "val_ww"
 VAL_CE_DIR = "val_ce"
-VAL_CE_PARTICLES = 200_000
+VAL_CE_PARTICLES = 100_000
 VAL_CE_BATCHES = 100
 
 WW_BATCHES = 100
@@ -212,22 +213,50 @@ else:
     print(f"\n[Survival] All {N_BINS} active bins have survival ≥ {SURVIVAL_MIN:.0%} "
           f"at UNC_LIMIT={UNC_LIMIT:.0%}.")
 
-X_train, X_val, Y_train, Y_val, Sigma_train, Sigma_val = train_test_split(
-    X_all, Y_all, Sigma_all,
+def _cover_y_range(train_idx, val_idx, Y):
+    pad_frac = 0.02
+    train_idx = [int(i) for i in np.asarray(train_idx).ravel()]
+    val_idx = [int(i) for i in np.asarray(val_idx).ravel()]
+    min_val = max(5, int(round(0.5 * len(val_idx))))
+    while len(val_idx) > min_val:
+        changed = False
+        for b in range(Y.shape[1]):
+            y_train = Y[train_idx, b]
+            y_val = Y[val_idx, b]
+            span = float(np.percentile(y_train, 95) - np.percentile(y_train, 5))
+            pad = pad_frac * span if np.isfinite(span) and span > 0.0 else 0.0
+            j_hi = int(np.argmax(y_val))
+            if float(y_val[j_hi]) > float(np.max(y_train)) + pad:
+                train_idx.append(val_idx.pop(j_hi))
+                changed = True
+                break
+            j_lo = int(np.argmin(y_val))
+            if float(y_val[j_lo]) < float(np.min(y_train)) - pad:
+                train_idx.append(val_idx.pop(j_lo))
+                changed = True
+                break
+        if not changed:
+            break
+    return np.asarray(train_idx, dtype=int), np.asarray(val_idx, dtype=int)
+
+_all_idx = np.arange(len(X_all))
+_train_idx, _val_idx = train_test_split(
+    _all_idx,
     test_size=VAL_FRACTION,
     random_state=RANDOM_SEED,
     shuffle=True,
 )
+_train_idx, _val_idx = _cover_y_range(_train_idx, _val_idx, Y_all)
+
+X_train = X_all[_train_idx]
+X_val = X_all[_val_idx]
+Y_train = Y_all[_train_idx]
+Y_val = Y_all[_val_idx]
+Sigma_train = Sigma_all[_train_idx]
+Sigma_val = Sigma_all[_val_idx]
 
 N_train = len(X_train)
 N_val   = len(X_val)
-
-_ALLOWED_Y_TRANSFORMS = ("boxcox", "yeojohnson", "log_eps")
-if Y_TRANSFORM not in _ALLOWED_Y_TRANSFORMS:
-    raise ValueError(
-        f"Y_TRANSFORM={Y_TRANSFORM!r} is not supported. "
-        f"Choose one of {_ALLOWED_Y_TRANSFORMS}."
-    )
 
 def as_1d(arr):
     return np.asarray(arr, dtype=float).reshape(-1)
@@ -441,19 +470,18 @@ class YeoJohnsonStdTransform:
     def inverse_transform(self, z_2d):
         u = as_1d(z_2d) * self.scale_ + self.mean_
         lam = self.lam_
-        y = np.empty_like(u)
+        y = np.zeros_like(u)
         pos = u >= 0.0
-        neg = ~pos
+        if not np.any(pos):
+            return y.reshape(-1, 1)
+        up = u[pos]
         if abs(lam) < 1e-8:
-            y[pos] = np.expm1(u[pos])
+            y[pos] = np.expm1(up)
+        elif lam > 0.0:
+            y[pos] = np.power(lam * up + 1.0, 1.0 / lam) - 1.0
         else:
-            base = np.maximum(lam * u[pos] + 1.0, 1e-30)
+            base = np.maximum(lam * up + 1.0, 1e-30)
             y[pos] = np.power(base, 1.0 / lam) - 1.0
-        if abs(lam - 2.0) < 1e-8:
-            y[neg] = 1.0 - np.exp(-u[neg])
-        else:
-            base = np.maximum(1.0 - (2.0 - lam) * u[neg], 1e-30)
-            y[neg] = 1.0 - np.power(base, 1.0 / (2.0 - lam))
         return y.reshape(-1, 1)
 
     def sigma_to_z(self, y, sigma_y):
@@ -488,15 +516,40 @@ class YeoJohnsonStdTransform:
         return tf
 
 
-def make_y_transform():
-    """Factory for the configured Y_TRANSFORM."""
-    if Y_TRANSFORM == "boxcox":
+_ALLOWED_Y_TRANSFORMS = ("boxcox", "yeojohnson", "log_eps")
+_TRANSFORM_ALIASES = {
+    "yeo-johnson": "yeojohnson",
+    "yeo_johnson": "yeojohnson",
+}
+
+def _canonicalize_transform_name(name, allow_best=False):
+    if isinstance(name, (bytes, bytearray)):
+        name = name.decode()
+    if not isinstance(name, str):
+        raise ValueError(
+            f"Transform spec must be a string, got {type(name).__name__}: {name!r}"
+        )
+    key = _TRANSFORM_ALIASES.get(name.strip().lower(), name.strip().lower())
+    allowed = set(_ALLOWED_Y_TRANSFORMS)
+    if allow_best:
+        allowed.add("best")
+    if key not in allowed:
+        extra = " or 'best'" if allow_best else ""
+        raise ValueError(
+            f"Y transform {name!r} is not supported. "
+            f"Choose one of {_ALLOWED_Y_TRANSFORMS}{extra}."
+        )
+    return key
+
+def make_y_transform(name):
+    name = _canonicalize_transform_name(name, allow_best=False)
+    if name == "boxcox":
         return BoxCoxStdTransform()
-    if Y_TRANSFORM == "yeojohnson":
+    if name == "yeojohnson":
         return YeoJohnsonStdTransform()
-    if Y_TRANSFORM == "log_eps":
+    if name == "log_eps":
         return LogEpsStdTransform()
-    raise ValueError(f"Unknown Y_TRANSFORM={Y_TRANSFORM!r}")
+    raise ValueError(f"Unknown Y transform {name!r}")
 
 def y_transform_from_spec(spec):
     """Restore a transform from a cache payload dict."""
@@ -507,6 +560,7 @@ def y_transform_from_spec(spec):
             name = "boxcox"
         else:
             name = "log_eps"
+    name = _canonicalize_transform_name(name, allow_best=False)
     if name == "boxcox":
         return BoxCoxStdTransform.from_spec(spec)
     if name == "yeojohnson":
@@ -515,57 +569,217 @@ def y_transform_from_spec(spec):
         return LogEpsStdTransform.from_spec(spec)
     raise ValueError(f"Unknown transform name in cache: {name!r}")
 
+def _qq_correlation(z):
+    z = np.sort(np.asarray(z, dtype=float))
+    z = z[np.isfinite(z)]
+    n = z.size
+    if n < 8:
+        return np.nan
+    p = (np.arange(1, n + 1) - 0.3175) / (n + 0.365)
+    p = np.clip(p, 1e-6, 1.0 - 1e-6)
+    theo = norm.ppf(p)
+    if np.std(theo) < 1e-15 or np.std(z) < 1e-15:
+        return np.nan
+    return float(np.corrcoef(theo, z)[0, 1])
+
+def _transform_rank_score(z):
+    z = np.asarray(z, dtype=float)
+    z = z[np.isfinite(z)]
+    if z.size < 8 or float(np.std(z)) < 1e-8:
+        return -np.inf
+    try:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            skew = float(scipy_skew(z, bias=False))
+    except Exception:
+        skew = np.nan
+    qq = _qq_correlation(z)
+    abs_skew = abs(skew) if np.isfinite(skew) else 10.0
+    qq_r = float(qq) if np.isfinite(qq) else 0.0
+    return qq_r - 0.5 * abs_skew
+
+_LAMBDA_ABS_MAX = 2.0
+
+def _fit_candidate(name, y):
+    try:
+        tf = make_y_transform(name)
+        z = tf.fit_transform(np.asarray(y, dtype=float).reshape(-1, 1)).ravel()
+    except Exception:
+        return None, -np.inf
+    return tf, _transform_rank_score(z)
+
+def _lambda_in_bounds(tf):
+    lam = getattr(tf, "lam_", None)
+    if lam is None:
+        return True
+    return abs(float(lam)) <= _LAMBDA_ABS_MAX
+
+def _expand_y_transform_spec(spec):
+    if isinstance(spec, str):
+        return [_canonicalize_transform_name(spec, allow_best=True)] * N_BINS
+
+    if isinstance(spec, np.ndarray):
+        spec = spec.tolist()
+    if not isinstance(spec, (list, tuple)):
+        raise TypeError(
+            "Y_TRANSFORM must be a transform name, 'best', or a sequence of names. "
+            f"Got {type(spec).__name__}."
+        )
+
+    names = [_canonicalize_transform_name(item, allow_best=True) for item in spec]
+    if len(names) == N_BINS:
+        return names
+    if len(names) == N_BINS_FULL:
+        return [names[int(i)] for i in ACTIVE_IDX]
+    raise ValueError(
+        f"Y_TRANSFORM has length {len(names)}; expected {N_BINS} (one per active bin) "
+        f"or {N_BINS_FULL} (one per spectrum bin; inactive bins are dropped)."
+    )
+
+def resolve_y_transform_names(y_train):
+    requested = _expand_y_transform_spec(Y_TRANSFORM)
+    resolved = []
+    warnings_out = []
+    for b, name in enumerate(requested):
+        if name != "best":
+            resolved.append(name)
+            continue
+        ranked = []
+        for cand in _ALLOWED_Y_TRANSFORMS:
+            tf, score = _fit_candidate(cand, y_train[:, b])
+            ranked.append((score, cand, tf))
+        ranked.sort(key=lambda item: item[0], reverse=True)
+        usable = [
+            item for item in ranked
+            if np.isfinite(item[0]) and item[2] is not None
+        ]
+        if not usable:
+            resolved.append("log_eps")
+            continue
+        chosen = next((item for item in usable if _lambda_in_bounds(item[2])), None)
+        if chosen is None:
+            _, cand, tf = usable[0]
+            warnings_out.append((BIN_COLS[b], cand, float(tf.lam_)))
+        else:
+            _, cand, _tf = chosen
+        resolved.append(cand)
+    return resolved, warnings_out
+
+def y_transform_label():
+    names = [tf.name for tf in y_transformers]
+    if not names:
+        return str(Y_TRANSFORM)
+    if all(name == names[0] for name in names):
+        return names[0]
+    parts = [
+        f"{name} ×{names.count(name)}"
+        for name in _ALLOWED_Y_TRANSFORMS
+        if names.count(name)
+    ]
+    return "per-bin (" + ", ".join(parts) + ")"
+
+def _y_transform_cache_token():
+    names = [tf.name for tf in y_transformers]
+    if names and all(name == names[0] for name in names):
+        return names[0]
+    return names
+
+y_transform_names, _lambda_warnings = resolve_y_transform_names(Y_train)
+_yt_requested = Y_TRANSFORM if isinstance(Y_TRANSFORM, str) else "vector"
+_yt_counts = ", ".join(
+    f"{name}={y_transform_names.count(name)}"
+    for name in _ALLOWED_Y_TRANSFORMS
+    if y_transform_names.count(name)
+)
+print(f"\n[Y transform] {_yt_requested}: {_yt_counts}")
+for _bin_name, _kept, _lam in _lambda_warnings:
+    print(
+        f"             [WARNING] {_bin_name}: every transform has λ outside "
+        f"[-2, 2]. Keeping {_kept} (λ={_lam:.3f}), which scored best."
+    )
+
 y_transformers  = []
 log_override_bins = []
 Y_train_z       = np.zeros_like(Y_train)
 Y_val_z         = np.zeros_like(Y_val)
 masks_train     = []
 
-print(f"\n[Y transform] Using Y_TRANSFORM={Y_TRANSFORM!r}")
 for b in range(N_BINS):
     # Mask out samples for this specific bin if they exceed UNC_LIMIT
     mask_b = (Sigma_train[:, b] / np.maximum(Y_train[:, b], 1e-20)) <= UNC_LIMIT
     masks_train.append(mask_b)
 
-    tf = make_y_transform()
+    tf = make_y_transform(y_transform_names[b])
     Y_train_z[:, b] = tf.fit_transform(Y_train[:, b].reshape(-1, 1)).flatten()
     if (
-        Y_TRANSFORM == "boxcox"
+        tf.name in ("boxcox", "yeojohnson")
         and tf.lam_ > LOG_OVERRIDE_LAMBDA
         and Y_obs_norm[b] < np.quantile(Y_train[:, b], LOG_OVERRIDE_TARGET_Q)
     ):
-        fitted_lam = tf.lam_
+        fitted_name, fitted_lam = tf.name, tf.lam_
+        tf = BoxCoxStdTransform()
         Y_train_z[:, b] = tf.fit_transform(Y_train[:, b].reshape(-1, 1), lam=0.0).flatten()
-        log_override_bins.append((BIN_COLS[b], fitted_lam))
+        log_override_bins.append((BIN_COLS[b], fitted_name, fitted_lam))
     Y_val_z[:, b]   = tf.transform(Y_val[:, b].reshape(-1, 1)).flatten()
     y_transformers.append(tf)
 
-if Y_TRANSFORM == "boxcox":
+_same_transform = all(tf.name == y_transformers[0].name for tf in y_transformers)
+if _same_transform and y_transformers[0].name == "boxcox":
     lams = np.array([tf.lam_ for tf in y_transformers], dtype=float)
     print(
         f"             Box-Cox λ: median={np.median(lams):.3f}  "
         f"[{lams.min():.3f}, {lams.max():.3f}]  "
-        f"(λ=0 ≡ log; λ=0.5 ≈ sqrt)"
     )
     print(
         f"             Log override (fitted λ > {LOG_OVERRIDE_LAMBDA}, target below "
         f"train q{100 * LOG_OVERRIDE_TARGET_Q:.0f}): {len(log_override_bins)} bin(s)"
     )
-    for name, fitted_lam in log_override_bins:
-        print(f"               {name}: λ {fitted_lam:.3f} → 0")
-elif Y_TRANSFORM == "yeojohnson":
+    for bin_name, src_name, fitted_lam in log_override_bins:
+        print(f"               {bin_name}: {src_name} λ {fitted_lam:.3f} → log")
+elif _same_transform and y_transformers[0].name == "yeojohnson":
     lams = np.array([tf.lam_ for tf in y_transformers], dtype=float)
     print(
         f"             Yeo-Johnson λ: median={np.median(lams):.3f}  "
         f"[{lams.min():.3f}, {lams.max():.3f}]  "
-        f"(λ=1 ≡ identity on y≥0)"
     )
-elif Y_TRANSFORM == "log_eps":
+elif _same_transform and y_transformers[0].name == "log_eps":
     eps = np.array([tf.eps_ for tf in y_transformers], dtype=float)
     print(
         f"             log_eps ε: median={np.median(eps):.3e}  "
         f"[{eps.min():.3e}, {eps.max():.3e}]"
     )
+else:
+    _boxcox_tfs = [tf for tf in y_transformers if tf.name == "boxcox"]
+    if _boxcox_tfs:
+        lams = np.array([tf.lam_ for tf in _boxcox_tfs], dtype=float)
+        print(
+            f"             Box-Cox λ ({len(_boxcox_tfs)} bin(s)): "
+            f"median={np.median(lams):.3f}  "
+            f"[{lams.min():.3f}, {lams.max():.3f}]  "
+        )
+    if log_override_bins:
+        print(
+            f"             Log override (fitted λ > {LOG_OVERRIDE_LAMBDA}, target below "
+            f"train q{100 * LOG_OVERRIDE_TARGET_Q:.0f}): {len(log_override_bins)} bin(s)"
+        )
+        for bin_name, src_name, fitted_lam in log_override_bins:
+            print(f"               {bin_name}: {src_name} λ {fitted_lam:.3f} → log")
+    _yj_tfs = [tf for tf in y_transformers if tf.name == "yeojohnson"]
+    if _yj_tfs:
+        lams = np.array([tf.lam_ for tf in _yj_tfs], dtype=float)
+        print(
+            f"             Yeo-Johnson λ ({len(_yj_tfs)} bin(s)): "
+            f"median={np.median(lams):.3f}  "
+            f"[{lams.min():.3f}, {lams.max():.3f}]  "
+        )
+    _log_tfs = [tf for tf in y_transformers if tf.name == "log_eps"]
+    if _log_tfs:
+        eps = np.array([tf.eps_ for tf in _log_tfs], dtype=float)
+        print(
+            f"             log_eps ε ({len(_log_tfs)} bin(s)): "
+            f"median={np.median(eps):.3e}  "
+            f"[{eps.min():.3e}, {eps.max():.3e}]"
+        )
 
 Sigma_train_z = np.zeros_like(Sigma_train)
 for b in range(N_BINS):
@@ -656,7 +870,7 @@ def _gpr_cache_meta():
         "random_seed": int(RANDOM_SEED),
         "val_fraction": float(VAL_FRACTION),
         "unc_limit": float(UNC_LIMIT),
-        "y_transform": str(Y_TRANSFORM),
+        "y_transform": _y_transform_cache_token(),
         "log_override_lambda": float(LOG_OVERRIDE_LAMBDA),
         "log_override_target_q": float(LOG_OVERRIDE_TARGET_Q),
         "csv_basename": os.path.basename(CSV_PATH),
@@ -1051,18 +1265,42 @@ if not loaded_from_cache:
         except Exception as e:
             print(f"[GPR cache] WARNING: failed to save cache ({e})")
 
+def spectra_from_z(z):
+    z = np.asarray(z, dtype=float)
+    if z.ndim != 2 or z.shape[1] != N_BINS:
+        raise ValueError(f"Expected ({N_BINS},) columns, got shape {z.shape}.")
+    y = np.empty(z.shape, dtype=float)
+    for b in range(N_BINS):
+        y[:, b] = y_transformers[b].inverse_transform(
+            z[:, b].reshape(-1, 1)
+        ).ravel()
+    y = np.maximum(y, 0.0)
+    total = y.sum(axis=1)
+    ok = np.isfinite(total) & (total > 0.0)
+    y[ok] /= total[ok, None]
+    return y, total
+
+def _print_flux_sum(where, total):
+    total = np.asarray(total, dtype=float)
+    finite = total[np.isfinite(total)]
+    if finite.size == 0:
+        print(f"[Spectrum] {where}: no finite GP flux sum.")
+        return
+    print(
+        f"[Spectrum] {where}: GP flux divided by its sum. "
+        f"Sum before normalization: median={np.median(finite):.4f}  "
+        f"[{finite.min():.4f}, {finite.max():.4f}]"
+    )
+
 print("\n[Validation] Running predictions on held-out set …")
 
 X_val_ot      = ot.Sample(X_val_scaled.tolist())
 Y_pred_val_z  = np.zeros((N_val, N_BINS))   # GPR output — log-std space
-Y_pred_val    = np.zeros((N_val, N_BINS))   # back-transformed via exp(z·scale + mean)
 
 for b, model in enumerate(gpr_models):
-    pred_z              = np.array(model(X_val_ot)).flatten()
-    Y_pred_val_z[:, b]  = pred_z
-    Y_pred_val[:, b]    = y_transformers[b].inverse_transform(
-        pred_z.reshape(-1, 1)
-    ).flatten()
+    Y_pred_val_z[:, b] = np.array(model(X_val_ot)).flatten()
+Y_pred_val, _val_flux_sum = spectra_from_z(Y_pred_val_z)
+_print_flux_sum("validation", _val_flux_sum)
 # Same per-bin cut as training: score only validation rows with σ/y ≤ UNC_LIMIT.
 masks_val = [
     (Sigma_val[:, b] / np.maximum(Y_val[:, b], 1e-20)) <= UNC_LIMIT
@@ -1107,14 +1345,15 @@ for b in range(N_BINS):
     val_r2_z_list.append(r2_z)
 
 # Summary table
-print("\n" + "─" * 100)
-print(f"{'Bin':<6} {'Model':>5} {'Kernel':>6} {'Train R²(Z)':>12} {'LOO R²(Z)':>10} "
+print("\n" + "─" * 114)
+print(f"{'Bin':<6} {'Y tf':<12} {'Model':>5} {'Kernel':>6} {'Train R²(Z)':>12} {'LOO R²(Z)':>10} "
       f"{'Val R²(Z)':>10} {'Val R²(orig)':>13} {'Val RMSE':>10}")
-print("─" * 100)
+print("─" * 114)
 for b in range(N_BINS):
     flag = " ← poor" if val_r2_list[b] < 0.80 else ""
     print(
-        f"{BIN_COLS[b]:<6}  {str(fit_degree_list[b]):>4}  {str(fit_sparse_list[b]):>6}  "
+        f"{BIN_COLS[b]:<6}  {y_transformers[b].name:<12}  {str(fit_degree_list[b]):>4}  "
+        f"{str(fit_sparse_list[b]):>6}  "
         f"{train_r2_list[b]:>12.4f}  {loo_r2_list[b]:>10.4f}  "
         f"{val_r2_z_list[b]:>10.4f}  {val_r2_list[b]:>12.4f}  "
         f"{val_rmse_list[b]:>9.5f}{flag}"
@@ -1123,7 +1362,7 @@ for b in range(N_BINS):
 print("  Note: Train/LOO/Val R²(Z) are in transformed Z-space (apples-to-apples).")
 print("        Val scores use only hold-out rows with σ/y ≤ UNC_LIMIT.")
 print("        Val R²(orig) and RMSE are in the original spectrum space.")
-print(f"        Y_TRANSFORM={Y_TRANSFORM!r}. A bin with high Val R²(Z) but low")
+print(f"        Y transform: {y_transform_label()}. A bin with high Val R²(Z) but low")
 print("        Val R²(orig) signals inverse-transform amplifying tail error.")
 
 sigma_gp_z_val = np.full((N_val, N_BINS), np.nan)
@@ -1369,7 +1608,7 @@ if poor_bins and PRINT_POOR_BINS:
         ax_dist.set_xlabel("Output value (original space)", fontsize=8)
         ax_dist.set_ylabel("Count", fontsize=8)
         ax_dist.set_title(
-            f"Output dist  Z({Y_TRANSFORM}): μ={y_transformers[b].mean_:.2f} "
+            f"Output dist  Z({y_transformers[b].name}): μ={y_transformers[b].mean_:.2f} "
             f"σ={y_transformers[b].scale_:.2f}",
             fontsize=9,
         )
@@ -1476,6 +1715,7 @@ for b in range(N_BINS):
     row = {
         "bin":              BIN_COLS[b],
         "bin_idx":          b,
+        "y_transform":      y_transformers[b].name,
         "trend":            fit_degree_list[b],
         "kernel":           fit_sparse_list[b],
         "train_r2_z":       train_r2_list[b],
@@ -1524,7 +1764,7 @@ Sigma_obs = np.array([
 ], dtype=float)
 Sigma_obs = np.maximum(Sigma_obs, SIGMA_Z_FLOOR)
 print(f"[Likelihood] σ range: [{Sigma_obs.min():.4f}, {Sigma_obs.max():.4f}]  "
-      f"(from LIKELIHOOD_SIGMA_PCT={LIKELIHOOD_SIGMA_PCT}, Y_TRANSFORM={Y_TRANSFORM})")
+      f"(from LIKELIHOOD_SIGMA_PCT={LIKELIHOOD_SIGMA_PCT}, Y transform={y_transform_label()})")
 
 input_scale   = x_scaler.scale_.copy()    # shape (n_inputs,)
 input_shift   = x_scaler.min_.copy()      # shape (n_inputs,)  (= -X_min * scale_)
@@ -1751,11 +1991,7 @@ pred_z_all    = np.empty((len(posterior_draws), N_BINS))
 for b in range(N_BINS):
     pred_z_all[:, b] = np.array(gpr_models[b](posterior_sample)).flatten()
 
-pred_orig_all = np.empty_like(pred_z_all)
-for b in range(N_BINS):
-    pred_orig_all[:, b] = y_transformers[b].inverse_transform(
-        pred_z_all[:, b].reshape(-1, 1)
-    ).flatten()
+pred_orig_all, _ = spectra_from_z(pred_z_all)
 
 resid_z     = pred_z_all - Y_obs_norm_z[None, :]            # (N_draws, N_BINS)
 chi2_draws  = np.sum(BIN_WEIGHTS[None, :] * (resid_z / Sigma_obs[None, :]) ** 2, axis=1)   # (N_draws,)
@@ -1773,7 +2009,7 @@ mcmc_errors = np.mean(np.abs(log_diff), axis=1) * 100       # shape (N_draws,)
 best_err    = float(mcmc_errors[best_idx])
 
 print("\n" + "=" * 70)
-print(f"BEST CONFIGURATION FOUND IN MCMC SAMPLING (min χ² in Z-space, Y_TRANSFORM={Y_TRANSFORM}):")
+print("BEST CONFIGURATION FOUND IN MCMC SAMPLING (min χ² in Z-space):")
 best_config_str = ", ".join([f"{col} = {best_draw[i]:.2f}" for i, col in enumerate(INPUT_COLS)])
 print(best_config_str)
 print(f"χ² = {best_chi2:.2f}   reduced χ² = {best_redchi:.2f}  (over {N_BINS} bins)")
@@ -1825,28 +2061,25 @@ for b in range(N_BINS):
         except Exception as e:
             print(f"        Bin {b:2d}  cond. variance failed: {e}")
 
-# (2) Monte Carlo mixture + exact back-transform, per bin
+# (2) Monte Carlo mixture + exact back-transform, per spectrum
 _rng_pp = np.random.default_rng(RANDOM_SEED)
-pp_lo  = np.zeros(N_BINS)
-pp_med = np.zeros(N_BINS)
-pp_hi  = np.zeros(N_BINS)
-for b in range(N_BINS):
-    mu_b = pred_z_all[:, b]
-    sd_b = np.nan_to_num(sigma_gp_z_draws[:, b], nan=0.0)
-    z_samps = mu_b[:, None] + sd_b[:, None] * _rng_pp.standard_normal(
-        (len(mu_b), 50))
-    y_samps = y_transformers[b].inverse_transform(
-        z_samps.reshape(-1, 1)).flatten()
-    pp_lo[b]  = np.percentile(y_samps, _pp_q_lo)
-    pp_med[b] = np.percentile(y_samps, 50.0)
-    pp_hi[b]  = np.percentile(y_samps, _pp_q_hi)
+_n_noise = 50
+_sd = np.nan_to_num(sigma_gp_z_draws, nan=0.0)
+_z_samps = (
+    pred_z_all[:, None, :]
+    + _sd[:, None, :] * _rng_pp.standard_normal((len(pred_z_all), _n_noise, N_BINS))
+)
+_y_samps, _ = spectra_from_z(_z_samps.reshape(-1, N_BINS))
+pp_lo  = np.percentile(_y_samps, _pp_q_lo, axis=0)
+pp_med = np.percentile(_y_samps, 50.0, axis=0)
+pp_hi  = np.percentile(_y_samps, _pp_q_hi, axis=0)
 
 # (3) Variance decomposition (log-std space) — quantitative result for the paper
 var_param_z = np.var(pred_z_all, axis=0)
 var_surr_z  = np.nanmean(np.nan_to_num(sigma_gp_z_draws, nan=0.0) ** 2, axis=0)
 frac_surr   = var_surr_z / np.maximum(var_param_z + var_surr_z, 1e-30)
 print(f"\n[Predictive] Combined {PP_CRED}% band: parameter + surrogate uncertainty")
-print(f"             Surrogate share of total variance (Z-space, Y_TRANSFORM={Y_TRANSFORM}):")
+print(f"             Surrogate share of total variance (Z-space, Y transform={y_transform_label()}):")
 print(f"               mean={100*frac_surr.mean():.1f}%  "
       f"min={100*frac_surr.min():.1f}%  max={100*frac_surr.max():.1f}%")
 print(f"             (high → emulator error dominates; low → parameter posterior dominates)")

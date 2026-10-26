@@ -81,6 +81,8 @@ RANDOM_SEED  = 12
 
 The MinMax scaler and the per-bin transform are fit on the training split only. Prior bounds are the training min and max of each input, so a held-out extreme can sit slightly outside the prior box.
 
+After the shuffle, a hold-out row that carries a bin's minimum or maximum outside a pad of \(0.02\) times that bin's training 5–95% span is moved into training.
+
 ---
 
 ## Filtering
@@ -111,11 +113,15 @@ The two power maps, Box–Cox and Yeo–Johnson, are the ones scikit-learn descr
 *Left, grey: normalised flux of two energy bins, as stored in the CSV. Right, red: the same samples after a per-bin power transform, with the fitted \(\lambda\) on the panel. `|sk|` is the absolute skewness (lower is closer to symmetric). `QQ` is the correlation with normal quantiles (closer to 1 is closer to Gaussian). The top bin starts as a spike on zero; the transform spreads the positive tail and `QQ` rises, and the designs that were exactly zero stay as a bar at the left edge. The bottom bin was already close to a bell, so a \(\lambda\) near one half only compresses it slightly. The picture shows the kind of change to look for. The \(\lambda\) of a run is the one printed for that run's training column.*
 
 ```python
-Y_TRANSFORM = "boxcox"    # "boxcox" | "yeojohnson" | "log_eps"
+Y_TRANSFORM = "best"      # name | "best" | per-bin list
 LOG_FLOOR   = 1e-30
-LOG_OVERRIDE_LAMBDA   = 0.5
+LOG_OVERRIDE_LAMBDA   = 0.6
 LOG_OVERRIDE_TARGET_Q = 0.10
 ```
+
+A string applies one map to every bin: `boxcox`, `yeojohnson`, or `log_eps`. `"best"` selects, per active bin, the candidate with the largest score \(\mathrm{QQ\text{-}R} - 0.5\,|\mathrm{skew}|\) on that bin's training column. The candidates are the three maps above. An entry may be `"best"`.
+
+A fitted \(\lambda\) outside \([-2, 2]\) is skipped, and the next-best score is tried. A power that strong stretches the data so hard that the transform is unstable, even when its score looks good. If every candidate is outside that range, the highest score is kept and the log prints a warning.
 
 Each active bin is then z-scored on its own training column:
 
@@ -123,28 +129,28 @@ Each active bin is then z-scored on its own training column:
 Z = \frac{f(Y) - \mu}{s}
 \]
 
-\(\mu\) and \(s\) are the mean and standard deviation of \(f(Y)\) on those rows. After this step a residual of 1 is one standard deviation of that bin, in every bin, so a loud bin and a quiet bin are on the same footing. The GPR, the likelihood, and the MAP \(\chi^2\) all live in \(Z\). Predictions are mapped back with the exact inverse when a plot needs flux. Monte Carlo \(\sigma_Y\) is pushed to \(\sigma_Z\) with the delta method, \(\sigma_Z = \sigma_Y \, |f'(Y)| / s\).
+\(\mu\) and \(s\) are the mean and standard deviation of \(f(Y)\) on those rows. After this step a residual of 1 is one standard deviation of that bin, in every bin, so a loud bin and a quiet bin are on the same footing. The GPR, the likelihood, and the MAP \(\chi^2\) all live in \(Z\). A flux spectrum is the per-bin inverse, floored at 0, then divided by its sum. Monte Carlo \(\sigma_Y\) is pushed to \(\sigma_Z\) with the delta method, \(\sigma_Z = \sigma_Y \, |f'(Y)| / s\).
 
 === "boxcox"
 
     The default, for a column that is strictly positive. \(\lambda\) is the exponent that makes the positive training values as Gaussian as a Box–Cox map can (SciPy). \(\lambda = 0\) is a logarithm, the usual cure for a spike-plus-tail; \(\lambda = 0.5\) is a square root, a milder compression. Fewer than eight positive values falls back to a logarithm. Non-positive entries are clipped to a floor near one tenth of the smallest positive training value before the power is applied, so an occasional Monte Carlo zero still has a finite transform. The log prints the median and the range of \(\lambda\).
 
-    **Log override.** \(\lambda\) is chosen to make the bulk of the training column Gaussian, not to resolve the target. A fitted \(\lambda\) near 1 leaves the column almost linear, so the surrogate error in that bin is an absolute error of about the same size everywhere. That is harmless when the target sits among the typical training values, and it is a problem when the target is much smaller than them: the same absolute error is then as large as the target itself, and the posterior predictive band reaches zero flux. The override detects that case with two tests, and a bin that passes both is refitted with \(\lambda = 0\), a logarithm, so the surrogate error becomes relative.
+    **Log override.** Applies to Box–Cox and Yeo–Johnson. A bin is refit as Box–Cox with \(\lambda = 0\) when both tests below pass.
 
     | Setting | Test | What it detects |
     |---|---|---|
-    | `LOG_OVERRIDE_LAMBDA` | fitted \(\lambda\) above this value | The Box–Cox map is close to linear |
+    | `LOG_OVERRIDE_LAMBDA` | fitted \(\lambda\) above this value | The fitted power is above the cutoff |
     | `LOG_OVERRIDE_TARGET_Q` | target below this quantile of the bin's training values | The target is in the low tail of what the training set covers |
 
     `LOG_OVERRIDE_TARGET_Q` is a fraction of the training shields. With `0.10`, the training fluxes of the bin are sorted, and the threshold is the value below which the lowest 10% of shields fall (the 10th percentile). The test passes when the target is below that value. A smaller fraction only catches targets at the extreme low end of the training set; a larger one also catches targets in, say, the lower quarter; `0` switches the override off.
 
     Example: in the thermal bin of a dataset the fitted \(\lambda\) is 1.12, the 10th percentile of the training fluxes is 0.124, and the target is 0.025. Only about 4% of training shields are as low as the target. A typical surrogate error of 0.03 is a few percent of a flux of 0.5, but more than 100% of 0.025, so the bin is switched to a logarithm.
 
-    The log lists every switched bin with its fitted \(\lambda\). Both settings are part of the GPR cache fingerprint, so changing either one retrains the surrogates.
+    The log lists every switched bin as `<bin>: <source> λ → log`. Both settings are part of the GPR cache fingerprint, so changing either one retrains the surrogates.
 
 === "yeojohnson"
 
-    The same power, and the formula is defined at zero, so a column with Monte Carlo zeros is kept whole. \(\lambda\) is fit on the whole training column. \(\lambda = 1\) is the identity on \(y \ge 0\): the fit can leave an already bell-shaped bin alone. A column with fewer than eight rows, or with a single distinct value, keeps \(\lambda = 1\).
+    The same power, and the formula is defined at zero, so a column with Monte Carlo zeros is kept whole. \(\lambda\) is fit on the whole training column. \(\lambda = 1\) is the identity on \(y \ge 0\): the fit can leave an already bell-shaped bin alone. The inverse maps \(\psi < 0\) to \(y = 0\). The log override above applies; the refit is Box–Cox \(\lambda = 0\).
 
 === "log_eps"
 
@@ -198,7 +204,7 @@ GPR_CACHE_PATH = "trained_gps"    # None: train on every launch
 
 A successful fit is written to that directory (`meta.json`, `payload.pkl`, `ot_results.xml`): metamodels, transforms, scaler, masks, and the training scores. The next launch loads it and skips the MLE when the fingerprint matches.
 
-The fingerprint is the active bins, the input names, \(\nu\), `INITIAL_SCALE`, `SCALE_LB`, `SCALE_UB`, `NOISE_FLOOR`, `USE_MC_NOISE`, `Y_TRANSFORM`, `UNC_LIMIT`, the split (`RANDOM_SEED`, `VAL_FRACTION`, train and validation sizes), the CSV basename, and checksums of the training inputs and fluxes. A mismatch is printed and the bins are trained again.
+The fingerprint is the active bins, the input names, \(\nu\), `INITIAL_SCALE`, `SCALE_LB`, `SCALE_UB`, `NOISE_FLOOR`, `USE_MC_NOISE`, the fitted \(Y\) transform (one name when every bin shares it, otherwise the per-bin list after the log override), `LOG_OVERRIDE_LAMBDA`, `LOG_OVERRIDE_TARGET_Q`, `UNC_LIMIT`, the split (`RANDOM_SEED`, `VAL_FRACTION`, train and validation sizes), the CSV basename, and checksums of the training inputs and fluxes. A mismatch is printed and the bins are trained again.
 
 Set `GPR_CACHE_PATH = None` to train every time and write nothing.
 
@@ -235,7 +241,7 @@ Above 1 the misses are larger than the band, so the process is over-confident: i
 
 Sobol indices use a Saltelli design of size `SOBOL_SAMPLE_SIZE` on the OpenTURNS metamodel, in the scaled input box. The figure `gpr_sobol_indices.png` has first-order \(S_1\), total-order \(S_T\), and \(S_T - S_1\), against energy. \(L\) is one of the curves. See [Sobol sensitivity indices](../theory/bayesian_calibration.md#sobol-sensitivity-indices).
 
-`VAL_RESULTS_CSV` is one row per active bin: the scores above, the trend label (`GPR` or `const`), the kernel name, mean and median flux, relative-uncertainty mean / median / 75th / 95th / max, and one fitted length scale per input (`scale_x1`, `scale_t1`, …, `scale_L`).
+`VAL_RESULTS_CSV` is one row per active bin: the scores above, `y_transform`, the trend label (`GPR` or `const`), the kernel name, mean and median flux, relative-uncertainty mean / median / 75th / 95th / max, and one fitted length scale per input (`scale_x1`, `scale_t1`, …, `scale_L`). The summary table prints the fitted transform in the `Y tf` column.
 
 ---
 
@@ -353,7 +359,7 @@ After sampling, ArviZ prints mean, standard deviation, \(\hat R\), and effective
 PP_CRED = 94
 ```
 
-For every posterior draw and every active bin the script reads the GPR mean and the conditional standard deviation in \(Z\), draws 50 normal deviates, and applies the inverse transform. `PP_CRED` is the central percentile of that mixture, in percent. The median is drawn with the band.
+For every posterior draw the script reads the GPR mean and the conditional standard deviation in \(Z\), draws 50 normal deviates per bin, inverse-transforms the joint spectrum, floors it at 0, and divides by its sum (to make sure that the sum of the predicted flux is 1). `PP_CRED` is the central percentile of that mixture, in percent. The median is drawn with the band. The MAP \(\chi^2\) uses the GPR means in \(Z\), before this renormalization.
 
 The same loop splits the predictive variance in \(Z\) into a parameter piece (variance of the GPR mean across draws) and a surrogate piece (mean GP variance). The share of the surrogate piece is what `calibration_variance_decomposition.png` shows. A bin whose surrogate share is high is one where more training points would shrink the band more than a longer (or better tuned) chain would.
 
@@ -363,7 +369,7 @@ The posterior predictive check counts how many active target bins fall inside th
 
 ## MAP OpenMC check
 
-The MAP draw is the posterior sample with the smallest weighted \(\chi^2\) in \(Z\), using the same weights and the same \(\sigma_Z\) as the likelihood. The terminal also prints \(\chi^2 / N_{\mathrm{bins}}\) (labelled reduced \(\chi^2\)) and the mean absolute log-relative error of that draw in flux units. The log-relative error is only a reading of the chosen draw; selection uses the weighted \(\chi^2\). The banner labels that sum as \(\chi^2\) in the \(Z\) of `Y_TRANSFORM`.
+The MAP draw is the posterior sample with the smallest weighted \(\chi^2\) in \(Z\), using the same weights and the same \(\sigma_Z\) as the likelihood. The terminal also prints \(\chi^2 / N_{\mathrm{bins}}\) (labelled reduced \(\chi^2\)) and the mean absolute log-relative error of that draw in flux normalized unit. The log-relative error is only a reading of the chosen draw; selection uses the weighted \(\chi^2\).
 
 That draw is then one OpenMC foward model run.
 
@@ -447,7 +453,7 @@ The log follows the stages above. Names you can search for:
 [Weights] WEIGHT_MODE=...
 [Filter] Samples with any bin < 0 : ...
 [Survival] ...
-[Y transform] Using Y_TRANSFORM=...
+[Y transform] best: boxcox=..., yeojohnson=...
 [GPR]   MultiStart MLE: ... starting points
 [GPR cache] Saved ... → .../trained_gps
 [Validation] Running predictions on held-out set …
@@ -455,7 +461,7 @@ The log follows the stages above. Names you can search for:
 [Sobol] Sampling-based indices on GPR ...
 [Likelihood] σ range: [...]
 [Sampling] Starting Monte Carlo Sampling
-BEST CONFIGURATION FOUND IN MCMC SAMPLING (min χ² in Z-space, Y_TRANSFORM=...):
+BEST CONFIGURATION FOUND IN MCMC SAMPLING (min χ² in Z-space):
 [PPC] Target inside ...% predictive band: ...
 [Val Phase 1] Generating weight windows ...
 [Val Phase 2] Running CE production simulation …

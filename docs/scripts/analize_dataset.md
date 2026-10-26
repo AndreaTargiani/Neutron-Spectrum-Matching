@@ -59,7 +59,7 @@ Each candidate is applied per bin, then z-scored, \(Z = (f(Y) - \mu) / \sigma\).
 | `boxcox` | Per-bin \(\lambda\), with non-positive samples floored |
 | `yeo-johnson` | Per-bin \(\lambda\), defined at zero as well |
 
-`calibration.py` accepts `boxcox`, `yeojohnson`, or `log_eps`. The other rows are there so you can see whether the winner is one of those three or only close to it. Set `Y_TRANSFORM` to the supported name the ranking prefers.
+`calibration.py` accepts `boxcox`, `yeojohnson`, or `log_eps`, as one name, as `"best"` (per bin, score \(\mathrm{QQ\text{-}R} - 0.5\,|\mathrm{skew}|\), among those three), or as a per-bin sequence.
 
 The ranking (higher QQ correlation and normality rate, lower \(|\mathrm{skew}|\) and \(|\mathrm{kurtosis}|\)) is the bar chart `transform_ranking.png`. The terminal prints only the winning transform.
 

@@ -81,14 +81,14 @@ One map per bin, with \(f_b\), \(\mu_b\), and \(s_b\) taken from that bin's trai
 Z_b = \frac{f_b(Y_b) - \mu_b}{s_b}
 \]
 
-\(\mu_b\) and \(s_b\) are the mean and standard deviation of \(f_b(Y_b)\) on the training split. Dividing by \(s_b\) is the second half of the job. Flux bins span orders of magnitude, and a shared noise floor only makes sense once \(Z_b = 1\) means one standard deviation of bin \(b\), in every bin. If \(s_b\) is below \(10^{-12}\) (a bin with no spread), it is set to 1 so the division stays finite and \(Z_b \approx 0\). The inverse \(f_b^{-1}\) is applied exactly when a prediction is plotted in flux units, and when the posterior predictive band is built. The inverse is nonlinear, so a symmetric band in \(Z\) comes out asymmetric in flux, which is the shape a spike-plus-tail spectrum actually has.
+\(\mu_b\) and \(s_b\) are the mean and standard deviation of \(f_b(Y_b)\) on the training split. Dividing by \(s_b\) is the second half of the job. Flux bins span orders of magnitude, and a shared noise floor only makes sense once \(Z_b = 1\) means one standard deviation of bin \(b\), in every bin. If \(s_b\) is below \(10^{-12}\) (a bin with no spread), it is set to 1 so the division stays finite and \(Z_b \approx 0\). Flux predictions apply \(f_b^{-1}\) per bin, floor at 0, and divide the spectrum by its sum. The likelihood and the MAP \(\chi^2\) stay in \(Z\). The inverse is nonlinear, so a symmetric band in \(Z\) comes out asymmetric in flux.
 
-Three maps are implemented. Which one to use is an empirical question; [`analize_dataset.py`](../scripts/analize_dataset.md) ranks these and several others by how close \(Z\) is to a normal. The script accepts the three names below.
+Three maps are implemented. [`analize_dataset.py`](../scripts/analize_dataset.md) ranks these and several others by how close \(Z\) is to a normal. `Y_TRANSFORM` is one of the names below, `"best"`, or a per-bin sequence. `"best"` selects per bin by \(\mathrm{QQ\text{-}R} - 0.5\,|\mathrm{skew}|\) on the training column, among the three maps. A fitted \(\lambda\) outside \([-2, 2]\) is skipped: a power that strong stretches the data so hard that the transform is unstable, even when its score looks good. If every candidate is outside that range, the highest score is kept and a warning is printed.
 
 | `Y_TRANSFORM` | \(f(Y)\) | When to use it |
 |---|---|---|
-| `boxcox` | Box–Cox power, \(\lambda\) fit on the positive training values | The column is strictly positive, and you want \(\lambda\) chosen for Gaussianity. Non-positive values are clipped to a small floor first, so an occasional Monte Carlo zero still has a finite transform. \(\lambda = 0\) is a logarithm; \(\lambda = 0.5\) is a square root. A bin with a nearly linear fit (\(\lambda\) above `LOG_OVERRIDE_LAMBDA`) whose target sits in the low tail of the training values is refitted with \(\lambda = 0\). Used on neutron-physics GPR outputs by [Lartaud et al. (2022)](#references). |
-| `yeojohnson` | Yeo–Johnson power, \(\lambda\) fit on the whole training column | Same fit, and the formula is defined at zero, so Monte Carlo zeros are kept. \(\lambda = 1\) is the identity on \(y \ge 0\): an already bell-shaped bin can be left as it is. |
+| `boxcox` | Box–Cox power, \(\lambda\) fit on the positive training values | Strictly positive column. Non-positive values are clipped to a small floor. \(\lambda = 0\) is a logarithm; \(\lambda = 0.5\) is a square root. If \(\lambda >\) `LOG_OVERRIDE_LAMBDA` and the target is below `LOG_OVERRIDE_TARGET_Q` of the training column, the bin is refit at \(\lambda = 0\). Used on neutron-physics GPR outputs by [Lartaud et al. (2022)](#references). |
+| `yeojohnson` | Yeo–Johnson power, \(\lambda\) fit on the whole training column | Defined at zero. \(\lambda = 1\) is the identity on \(y \ge 0\). The same log override applies; the refit is Box–Cox \(\lambda = 0\). |
 | `log_eps` | \(\log(Y + \varepsilon)\) | A logarithm with no free \(\lambda\). \(\varepsilon\) is set from the positive training values. The same compression in every bin, which is the right tool when the ranking says a log is enough. |
 
 ### Uncertainty propagation
@@ -247,11 +247,11 @@ The reported geometry is the posterior draw that minimises the same weighted \(\
     \right)^2
 \]
 
-The script also prints \(\chi^2 / N_\text{bins}\). A mean absolute log-relative error in flux units is printed for that draw as a direct reading of the spectrum error. Selection uses \(\chi^2(\pmb{\theta})\).
+The script also prints \(\chi^2 / N_\text{bins}\). A mean absolute log-relative error of the unit-sum flux is printed for that draw. Selection uses \(\chi^2(\pmb{\theta})\).
 
 ### Posterior predictive band
 
-The band is wider than the MAP point. For each draw \(\pmb{\theta}_s\) and each bin, normal deviates are taken from \(\mathcal{N}(\hat Z_b(\pmb{\theta}_s),\, \sigma_{\mathrm{GP},b}^2(\pmb{\theta}_s))\) and passed through \(f_b^{-1}\). Percentiles of that mixture are the plotted band. The inverse is nonlinear, so the band in flux units is asymmetric. For Box–Cox with \(\lambda > 0\), the map only reaches \(y = 0\) at \(u = -1/\lambda\), and deviates below that point are the Gaussian tail spilling past zero flux; they are mapped to \(y = 0\). When \(\lambda\) is close to 1 the map is almost linear, so a wide bin can put its lower percentile exactly at zero, which a log axis draws as a band down to the bottom of the plot.
+The band is wider than the MAP point. For each draw \(\pmb{\theta}_s\), normal deviates are taken from \(\mathcal{N}(\hat Z_b(\pmb{\theta}_s),\, \sigma_{\mathrm{GP},b}^2(\pmb{\theta}_s))\) and passed through \(f_b^{-1}\). Each resulting spectrum is floored at 0 and divided by its sum. Percentiles of that mixture are the plotted band. The inverse is nonlinear, so the band in flux units is asymmetric. Box–Cox with \(\lambda > 0\) reaches \(y = 0\) at \(u = -1/\lambda\); deviates below that point map to \(y = 0\). 
 
 The law of total variance in \(Z\) splits the width into a parameter term, \(\mathrm{Var}[\hat Z_b(\pmb{\theta})]\), and a surrogate term, \(\mathbb{E}[\sigma_{\mathrm{GP},b}^2(\pmb{\theta})]\). Their ratio, per bin, says whether the band is dominated by the posterior or by the Gaussian process.
 

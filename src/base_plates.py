@@ -892,7 +892,7 @@ def plot_mcmc_validation_comparison(
     _plot_step(ax, energy_edges_mev, y_target, color='#e74c3c',
                linewidth=2.5, linestyle='--', label='Target values', zorder=4)
     _plot_step(ax, energy_edges_mev, pp_med, color='#16a085',
-               linewidth=2.5, linestyle='-.', label='Emulator (predictive median)', zorder=3)
+               linewidth=2.5, linestyle='-.', label='Emulator', zorder=3)
     _fill_between_step(
         ax, energy_edges_mev, np.maximum(pp_lo, 1e-10), pp_hi,
         alpha=0.15, color='#16a085',
